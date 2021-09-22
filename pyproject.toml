@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "genshinsignin"
+version = "0.1.0"
+description = "automate genshin sign in tool"
+authors = ["harumonia <zxjlm233@gmail.com>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "3.8"
+requests = "^2.26.0"
+loguru = "^0.5.3"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

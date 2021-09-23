@@ -35,7 +35,7 @@ async def simulator(return_type='dict') -> Union[dict, str]:
         await context.close()
         await browser.close()
     if return_type == 'dict':
-        return await {cookie['name']: cookie['value'] for cookie in cookies}
+        return {cookie['name']: cookie['value'] for cookie in cookies}
     elif return_type == 'str':
         return ';'.join([f"{cookie['name']}={cookie['value']}" for cookie in cookies])
     else:
@@ -112,23 +112,22 @@ class Login:
                 logger.info(
                     '--------------> now use simulator browser to get cookie.')
                 self.cfg.mihoyobbs_cookies = asyncio.run(simulator())
+                self.cfg.mihoyobbs_cookies_raw = ';'.join(
+                    f'{k}={v}' for k, v in self.cfg.mihoyobbs_cookies.items())
                 logger.success('<----------------- get cookie succeed')
             else:
                 # TODO: 进行通知
                 raise SystemExit
 
-        if not self.cfg.mihoyobbs_cookies:
-            self.cfg.mihoyobbs_cookies = split_cookies(
-                self.cfg.mihoyobbs_cookies_raw)
+            if not self.cfg.mihoyobbs_cookies:
+                self.cfg.mihoyobbs_cookies = split_cookies(
+                    self.cfg.mihoyobbs_cookies_raw)
 
-        if self.cfg.mihoyobbs_cookies['login_ticket'] == self.cfg.mihoyobbs_login_ticket:
-            return
-
-        if self.cfg.mihoyobbs_cookies.get('login_ticket'):
-            self.resolve_cookies()
-        else:
-            logger.error("login_ticket not in cookie")
-            self.cfg.clear_cookies()
+            if self.cfg.mihoyobbs_cookies.get('login_ticket'):
+                self.resolve_cookies()
+            else:
+                logger.error("login_ticket not in cookie")
+                self.cfg.clear_cookies()
 
 
 if __name__ == "__main__":

@@ -1,14 +1,14 @@
-# 米游社的Salt
+
 mihoyobbs_Salt = "fd3ykrh7o1j54g581upo1tvpam0dsgtf"
 mihoyobbs_Salt_web = "14bmu1mz0yuljprsfgpvjh3ju2ni468r"
 mihoyobbs_Salt_web_old = "h8w582wxwgqvahcdkpvdhbh2w9casgfl"
-# 米游社的版本
+
 mihoyobbs_Version = "2.7.0"  # Slat和Version相互对应
 mihoyobbs_Version_old = "2.3.0"
-# 米游社的客户端类型
-mihoyobbs_Client_type = "2"  # 1为ios 2为安卓
+
+mihoyobbs_Client_type = "1"  # 1为ios 2为安卓
 mihoyobbs_Client_type_web = "5"  # 4为pc web 5为mobile web
-# 米游社的分区列表
+
 mihoyobbs_List = [{
     "id": "1",
     "forumId": "1",
@@ -49,7 +49,6 @@ bbs_Detailurl = "https://bbs-api.mihoyo.com/post/api/getPostFull?post_id={}"
 bbs_Shareurl = "https://bbs-api.mihoyo.com/apihub/api/getShareConf?entity_id={}&entity_type=1"
 bbs_Likeurl = "https://bbs-api.mihoyo.com/apihub/sapi/upvotePost"  # post json
 
-# 原神自动签到相关的设置
 genshin_Act_id = "e202009291139501"
 genshin_Account_info_url = "https://api-takumi.mihoyo.com/binding/api/getUserGameRolesByCookie?game_biz=hk4e_cn"
 genshin_Signlisturl = "https://api-takumi.mihoyo.com/event/bbs_sign_reward/home?act_id={}"
@@ -57,7 +56,6 @@ genshin_Is_signurl = "https://api-takumi.mihoyo.com/event/bbs_sign_reward/info?a
 genshin_Signurl = "https://api-takumi.mihoyo.com/event/bbs_sign_reward/sign"
 genshin_cookie_refresh = 'https://api-takumi.mihoyo.com/auth/api/getCookieAccountInfoBySToken'
 
-# 崩坏3自动签到相关的设置
 honkai3rd_Act_id = "e202104072769"
 honkai3rd_Account_info_url = "https://api-takumi.mihoyo.com/binding/api/getUserGameRolesByCookie?game_biz=bh3_cn"
 honkai3rd_Is_signurl = "https://api-takumi.mihoyo.com/common/euthenia/index?act_id={}&region={}&uid={}"

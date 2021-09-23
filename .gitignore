@@ -131,5 +131,5 @@ dmypy.json
 # VSCode
 .vscode/
 
-!/config/config_example.json
-!/config/README.md
+config/config_ttj.json
+config/config_zxj.json

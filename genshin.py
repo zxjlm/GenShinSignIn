@@ -20,9 +20,9 @@ from loguru import logger
 
 
 class Genshin:
-    def __init__(self) -> None:
+    def __init__(self, cfg: Config) -> None:
         self.s = requests.session()
-        self.cfg = Config()
+        self.cfg = cfg
         self.s.headers = {
             'Accept': 'application/json, text/plain, */*',
             'DS': utils.get_ds(web=True, web_old=True),
@@ -98,7 +98,6 @@ class Genshin:
         return f'{raw_data["name"]}x{raw_data["cnt"]}'
 
     def sign_account(self, account):
-
         logger.info(f"now sign in for account {account['nickname']}...")
 
         is_data = self.is_signed(
@@ -119,13 +118,13 @@ class Genshin:
                 if data["retcode"] == 0:
                     if sign_days == 0:
                         logger.info(
-                            f"{account['nickname']} sign in succeed~\r\naward today is{self.get_item(self.sign_awards[sign_days])}")
+                            f"{account['nickname']} sign in succeed~ award today is{self.get_item(self.sign_awards[sign_days])}")
                     else:
                         logger.info(
-                            f"{account['nickname']} sign in succeed~\r\naward today is{self.get_item(self.sign_awards[sign_days + 1])}")
+                            f"{account['nickname']} sign in succeed~ award today is{self.get_item(self.sign_awards[sign_days + 1])}")
                 elif data["retcode"] == -5003:
                     logger.info(
-                        f"{account['nickname']} has signed~\r\n award today is {self.get_item(self.sign_awards[sign_days])}")
+                        f"{account['nickname']} has signed~ award today is {self.get_item(self.sign_awards[sign_days])}")
                 else:
                     logger.warning(f"sign in failed, response: {data}")
 

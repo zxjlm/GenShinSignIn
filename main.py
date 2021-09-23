@@ -1,74 +1,171 @@
-import time
-import login
-import config
-import random
-import genshin
+from config import Config
+from login import Login
+from genshin import Genshin
 import setting
 import mihoyobbs
+import utils
 import urllib3
 from loguru import logger
+import requests
+import platform
+import glob
+from argparse import ArgumentParser, RawDescriptionHelpFormatter
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
+__version__ = 0.2
+module_name = "GenShinSignIn"
 
 
 def main():
-    config.Load_config()
-    if config.enable_Config == True:
-        if config.mihoyobbs_Login_ticket == "" or config.mihoyobbs_Stuid == "" or config.mihoyobbs_Stoken == "":
-            login.login()
-            utils.shake_sleep()
-        if config.mihoyobbs["bbs_Signin_multi"] == True:
-            """
-            for i in setting.mihoyobbs_List:
-                if int(i["id"]) in config.mihoyobbs["bbs_Signin_multi_list"]:
-                    setting.mihoyobbs_List_Use.append(i)
-            """
-            for i in config.mihoyobbs["bbs_Signin_multi_list"]:
-                for i2 in setting.mihoyobbs_List:
+    version_string = (
+        f"%(prog)s {__version__} \n"
+        f"requests:  {requests.__version__} \n"
+        f"Python:  {platform.python_version()} \n"
+    )
+
+    parser = ArgumentParser(
+        formatter_class=RawDescriptionHelpFormatter,
+        description=f"{module_name} " f"(Version {__version__})",
+    )
+    parser.add_argument(
+        "--version",
+        action="version",
+        version=version_string,
+        help="Display version information and dependencies.",
+    )
+    parser.add_argument(
+        "--check-cookie",
+        default=False,
+        action="store_true",
+        dest="check_cookie",
+        help="Check cookie is effect.",
+    )
+    parser.add_argument(
+        "--parser-cookie",
+        default=False,
+        action="store_true",
+        dest="parser_cookie",
+        help="parser cookie.",
+    )
+    parser.add_argument(
+        "--check-configs",
+        "-c",
+        default=False,
+        action="store_true",
+        dest="check-configs",
+        help="parser cookie.",
+    )
+    parser.add_argument(
+        "--show-all-site",
+        action="store_true",
+        dest="show_site_list",
+        default=False,
+        help="Show all information of the apis in files.",
+    )
+    parser.add_argument(
+        "--json",
+        "-j",
+        metavar="JSON_FILES",
+        dest="json_files",
+        type=str,
+        nargs="+",
+        default=None,
+        help="Load data from a local JSON file.Accept plural " "files.",
+    )
+    parser.add_argument(
+        "--email",
+        "-e",
+        metavar="EMAIL_ADDRESS_LIST",
+        dest="emails",
+        type=str,
+        nargs="*",
+        default="not send",
+        help="Send email to mailboxes. You can order the "
+        "addresses in cmd argument, default is "
+        "in the file 'config.py'.",
+    )
+    parser.add_argument(
+        "--timeout",
+        action="store",
+        metavar="TIMEOUT",
+        dest="timeout",
+        default=None,
+        help="Time (in seconds) to wait for response to "
+        "requests. "
+        "Default timeout is 35s. "
+        "A longer timeout will be more likely to "
+        "get results from slow sites. "
+        "On the other hand, this may cause a long "
+        "delay to gather all results.",
+    )
+
+    args = parser.parse_args()
+
+    config_files = glob.glob(setting.path + '/config/*.json')
+
+    if args.check_cookie:
+        for config_file in config_files:
+            Login(config_file).is_cookies_expires()
+        raise SystemExit
+
+    if args.parser_cookie:
+        for config_file in config_files:
+            Login(config_file).cookie_process()
+        raise SystemExit
+
+    for config_file in config_files:
+        logger.info(
+            '****************** start to get config {} *********', config_file)
+        process(config_file)
+
+
+def process(config_file):
+    cfg = Config(config_file)
+    if cfg.enable_config == True:
+        Login(config_file).cookie_process()
+        # if cfg.mihoyobbs_login_ticket and cfg.mihoyobbs_stuid and cfg.mihoyobbs_stoken == "":
+
+        #     utils.shake_sleep()
+        if cfg.mihoyobbs["bbs_signin_multi"] == True:
+            for i in cfg.mihoyobbs["bbs_signin_multi_list"]:
+                for i2 in setting.mihoyobbs_list:
                     if i == int(i2["id"]):
-                        setting.mihoyobbs_List_Use.append(i2)
+                        setting.mihoyobbs_list_use.append(i2)
         else:
-            for i in setting.mihoyobbs_List:
+            for i in setting.mihoyobbs_list:
                 if int(i["id"]) == 5:
-                    setting.mihoyobbs_List_Use.append(i)
-        if config.mihoyobbs["bbs_Global"] == True:
-            bbs = mihoyobbs.mihoyobbs()
-            if bbs.Task_do["bbs_Sign"] and bbs.Task_do["bbs_Read_posts"] and bbs.Task_do["bbs_Like_posts"] and bbs.Task_do["bbs_Share"]:
+                    setting.mihoyobbs_list_use.append(i)
+        if cfg.mihoyobbs["bbs_global"] == True:
+            bbs = mihoyobbs.MihoyoBBS(cfg)
+            if bbs.task_do["bbs_sign"] and bbs.task_do["bbs_read_posts"] and bbs.task_do["bbs_like_posts"] and bbs.task_do["bbs_share"]:
                 logger.info(
-                    f"sign succeed {mihoyobbs.Today_have_getcoins}, now has {mihoyobbs.Have_coins} miyo coin")
+                    f"sign succeed {bbs.today_get_coins}, now has {bbs.total_points} miyo coin")
             else:
-                if config.mihoyobbs["bbs_Signin"] == True:
-                    bbs.Signin()
-                if config.mihoyobbs["bbs_Read_posts"] == True:
-                    bbs.Readposts()
-                if config.mihoyobbs["bbs_Like_posts"] == True:
-                    bbs.Likeposts()
-                if config.mihoyobbs["bbs_Share"] == True:
-                    bbs.Share()
-                bbs.Get_taskslist()
+                if cfg.mihoyobbs["bbs_signin"] == True:
+                    bbs.sign_in_bbs()
+                if cfg.mihoyobbs["bbs_read_posts"] == True:
+                    bbs.read_posts()
+                if cfg.mihoyobbs["bbs_like_posts"] == True:
+                    bbs.like_posts()
+                if cfg.mihoyobbs["bbs_share"] == True:
+                    bbs.share_posts()
+                bbs.get_tasks()
                 logger.info(
-                    f"今天已经获得{mihoyobbs.Today_have_getcoins}个米游币，还能获得{mihoyobbs.Today_getcoins}个米游币，目前有{mihoyobbs.Have_coins}个米游币")
+                    f"今天已经获得{bbs.today_have_getcoins}个米游币，还能获得{bbs.today_get_coins}个米游币，目前有{bbs.total_points}个米游币")
                 utils.shake_sleep()
         else:
             logger.info("米游社功能未启用！")
         # 原神签到
-        if(config.genshin_Auto_sign == True):
+        if(cfg.genshin_auto_sign == True):
             logger.info("正在进行原神签到")
-            genshin_Help = genshin.genshin()
-            genshin_Help.Sign_acc()
+            g = Genshin(cfg)
+            g.main()
             utils.shake_sleep()
         else:
             logger.info("原神签到功能未启用！")
-        # 崩坏3签到
-        if config.honkai3rd_Auto_sign == True:
-            logger.info("正在进行崩坏3签到")
-            honkai3rd_Help = honkai3rd.honkai3rd()
-            honkai3rd_Help.Sign_acc()
-        else:
-            logger.info("崩坏3签到功能未启用！")
     else:
         logger.warn("Config未启用！")
 
 
 if __name__ == "__main__":
     main()
-pass

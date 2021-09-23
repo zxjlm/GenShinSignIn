@@ -1,0 +1,20 @@
+{
+  "enable_config": true,
+  "config_version": 4,
+  "mihoyobbs_login_ticket": "",
+  "mihoyobbs_stuid": "",
+  "mihoyobbs_stoken": "",
+  "mihoyobbs_cookies_raw": "",
+  "mihoyobbs": {
+    "bbs_global": true,
+    "bbs_signin": true,
+    "bbs_signin_multi": true,
+    "bbs_signin_multi_list": [2, 5],
+    "bbs_read_posts": true,
+    "bbs_like_posts": true,
+    "bbs_unlike": true,
+    "bbs_share": true
+  },
+  "genshin_auto_sign": true,
+  "honkai3rd_auto_sign": false
+}

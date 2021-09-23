@@ -62,22 +62,23 @@ class Login:
         'Accept-Language': 'zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7,la;q=0.6',
     }
 
-    def __init__(self) -> None:
-        self.cfg = Config()
+    def __init__(self, config_path) -> None:
+        self.cfg = Config(config_path)
         self.use_simulator = True
 
     def is_cookies_expires(self) -> bool:
         params = (
             ('t', get_timestamp('js')),
         )
-        self._headers['Cookie'] = self.cfg.mihoyobbs_cookies_raw
+        headers = self._headers.copy()
+        headers['Cookie'] = self.cfg.mihoyobbs_cookies_raw
         response = requests.get('https://webapi.account.mihoyo.com/Api/login_by_cookie',
-                                headers=self._headers, params=params)
+                                headers=headers, params=params)
         if response.json()['data']['msg'] == '登录信息已失效，请重新登录':
             logger.warning('login cookie expires!!!')
             return True
         logger.success(
-            f'account_email: {response.json()["data"]["email"]}, login cookie is effect~')
+            f'account_email: {response.json()["data"]["account_info"]["email"]}, login cookie is effect~')
         return False
 
     def resolve_cookies(self) -> None:
@@ -85,15 +86,17 @@ class Login:
         self.cfg.mihoyobbs_login_ticket = self.cfg.mihoyobbs_cookies['login_ticket']
 
         logger.info('now start to set stuid, (2/3)')
-        data = requests.get(url=setting.bbs_cookie_url.format(
+        response = requests.get(url=setting.bbs_cookie_url.format(
             self.cfg.mihoyobbs_login_ticket))
+        data = response.json()
         if "成功" in data["data"]["msg"]:
             self.cfg.mihoyobbs_stuid = str(
                 data["data"]["cookie_info"]["account_id"])
 
             logger.info('now start to set stoken, (3/3)')
-            data = requests.get(url=setting.bbs_cookie_url2.format(
+            response = requests.get(url=setting.bbs_cookie_url2.format(
                 self.cfg.mihoyobbs_login_ticket, self.cfg.mihoyobbs_stuid))
+            data = response.json()
             self.cfg.mihoyobbs_stoken = data["data"]["list"][0]["token"]
 
             logger.success("login succeed")
@@ -103,7 +106,7 @@ class Login:
             self.cfg.clear_cookies()
 
     def cookie_process(self) -> None:
-        if not self.cfg.mihoyobbs_cookies or self.is_cookies_expires():
+        if not self.cfg.mihoyobbs_cookies_raw or self.is_cookies_expires():
             self.cfg.clear_cookies()
             if self.use_simulator:
                 logger.info(
@@ -114,14 +117,17 @@ class Login:
                 # TODO: 进行通知
                 raise SystemExit
 
-        if isinstance(self.cfg.mihoyobbs_cookies, str):
+        if not self.cfg.mihoyobbs_cookies:
             self.cfg.mihoyobbs_cookies = split_cookies(
                 self.cfg.mihoyobbs_cookies_raw)
+
+        if self.cfg.mihoyobbs_cookies['login_ticket'] == self.cfg.mihoyobbs_login_ticket:
+            return
 
         if self.cfg.mihoyobbs_cookies.get('login_ticket'):
             self.resolve_cookies()
         else:
-            logger.error("'login_ticket not in cookie")
+            logger.error("login_ticket not in cookie")
             self.cfg.clear_cookies()
 
 

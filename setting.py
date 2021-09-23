@@ -21,7 +21,7 @@ mihoyobbs_salt_web_old = "h8w582wxwgqvahcdkpvdhbh2w9casgfl"
 mihoyobbs_version = "2.7.0"  # Slat和Version相互对应
 mihoyobbs_version_old = "2.3.0"
 
-mihoyobbs_client_type = "1"  # 1为ios 2为安卓
+mihoyobbs_client_type = "2"  # 1为ios 2为安卓
 mihoyobbs_client_type_web = "5"  # 4为pc web 5为mobile web
 
 mihoyobbs_list = [{

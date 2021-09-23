@@ -9,7 +9,7 @@ Modified By: harumonia (zxjlm233@gmail.com>)
 -----
 Copyright 2020 - 2021 Node Supply Chain Manager Corporation Limited
 -----
-Description: 
+Description:
 """
 
 import utils
@@ -25,11 +25,11 @@ class MihoyoBBS:
     already_received_points = 0
     total_points = 0
 
-    def __init__(self):
+    def __init__(self, cfg: Config):
         self.s = requests.Session()
         self.s.headers = {
-            "DS": utils.Get_ds(web=False, web_old=False),
-            "cookie": f"stuid={Config.mihoyobbs_stuid};stoken={Config.mihoyobbs_stoken}",
+            "DS": utils.get_ds(web=False, web_old=False),
+            "cookie": f"stuid={cfg.mihoyobbs_stuid};stoken={cfg.mihoyobbs_stoken}",
             "x-rpc-client_type": setting.mihoyobbs_client_type,
             "x-rpc-app_version": setting.mihoyobbs_version,
             "x-rpc-sys_version": "6.0.1",
@@ -41,6 +41,7 @@ class MihoyoBBS:
             "Host": "bbs-api.mihoyo.com",
             "User-Agent": "okhttp/4.8.0"
         }
+        self.s.cookies.update(cfg.mihoyobbs_cookies)
         self.s.verify = False
 
         self.task_do = {
@@ -63,7 +64,7 @@ class MihoyoBBS:
         data = response.json()
         if "err" in data["message"]:
             logger.info("get tasks failed, maybe cookie need to renew.")
-            Config.clear_cookies()
+            # Config().clear_cookies()
             raise SystemExit
         else:
             self.today_get_coins = data["data"]["can_get_points"]
@@ -104,7 +105,7 @@ class MihoyoBBS:
         logger.info("get posts......")
         result = []
         response = self.s.get(url=setting.bbs_list_url.format(
-            setting.mihoyobbs_list_use[0]["forum_id"]))
+            setting.mihoyobbs_list_use[0]["forumId"]))
         data = response.json()
         for i in range(self.task_do['bbs_like_posts_num']):
             result.append({
@@ -119,56 +120,58 @@ class MihoyoBBS:
             logger.info("~")
         else:
             logger.info("start to sign in......")
+            print(self.s.headers, self.s.cookies)
             for i in setting.mihoyobbs_list_use:
                 response = self.s.post(url=setting.bbs_sign_url.format(
                     i["id"]), data="")
                 data = response.json()
-                if "err" not in data["message"]:
+                if data["message"] == 'OK':
                     logger.info(str(i["name"] + data["message"]))
                     utils.shake_sleep()
                 else:
-                    logger.info("failed to sign in, maybe cookie need renew")
-                    Config.clear_cookies()
+                    logger.info(
+                        "failed to sign in, maybe cookie need renew, response: {}", data)
+                    # Config().clear_cookies()
                     raise SystemExit
 
-    def Readposts(self):
-        if self.task_do["bbs_Read_posts"]:
+    def read_posts(self):
+        if self.task_do["bbs_read_posts"]:
             logger.info("task has finished~")
         else:
             logger.info("start to read post task......")
-            for i in range(self.task_do["bbs_Read_posts_num"]):
+            for i in range(self.task_do["bbs_read_posts_num"]):
                 response = self.s.get(url=setting.bbs_detail_url.format(
-                    self.posts[i][0]))
+                    self.posts[i]['post_id']))
                 data = response.json()
                 if data["message"] == "OK":
                     logger.info("read : {} succeed".format(
-                        self.posts[i][1]))
+                        self.posts[i]['subject']))
                 utils.shake_sleep()
 
     def like_posts(self):
-        if self.task_do["bbs_Like_posts"]:
+        if self.task_do["bbs_like_posts"]:
             logger.info("like post has finished~")
         else:
             logger.info("start to like task......")
             for i in range(self.task_do["bbs_like_posts_num"]):
                 response = self.s.post(url=setting.bbs_like_url, json={
-                                       "post_id": self.posts[i]["post_id"], "is_cancel": False})
+                    "post_id": self.posts[i]["post_id"], "is_cancel": False})
                 data = response.json()
                 if data["message"] == "OK":
                     logger.info("like: {} succeed".format(
-                        self.posts[i][1]))
-                if Config.mihoyobbs["bbs_Unlike"] == True:
+                        self.posts[i]['subject']))
+                if Config.mihoyobbs["bbs_unlike"] == True:
                     utils.shake_sleep()
                     response = self.s.post(url=setting.bbs_like_url, json={
-                                           "post_id": self.posts[i]["post_id"], "is_cancel": True})
+                        "post_id": self.posts[i]["post_id"], "is_cancel": True})
                     data = response.json()
                     if data["message"] == "OK":
                         logger.info("unlike: {} succeed".format(
-                            self.posts[i][1]))
+                            self.posts[i]['subject']))
                 utils.shake_sleep()
 
     def share_posts(self):
-        if self.task_do["bbs_Share"]:
+        if self.task_do["bbs_share"]:
             logger.info("share task has finished~")
         else:
             logger.info("start to share task......")

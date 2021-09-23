@@ -62,8 +62,8 @@ class Login:
         'Accept-Language': 'zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7,la;q=0.6',
     }
 
-    def __init__(self, config_path) -> None:
-        self.cfg = Config(config_path)
+    def __init__(self, cfg: Config) -> None:
+        self.cfg = cfg
         self.use_simulator = True
 
     def is_cookies_expires(self) -> bool:

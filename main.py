@@ -105,12 +105,14 @@ def main():
 
     if args.check_cookie:
         for config_file in config_files:
-            Login(config_file).is_cookies_expires()
+            cfg = Config(config_file)
+            Login(cfg).is_cookies_expires()
         raise SystemExit
 
     if args.parser_cookie:
         for config_file in config_files:
-            Login(config_file).cookie_process()
+            cfg = Config(config_file)
+            Login(cfg).cookie_process()
         raise SystemExit
 
     for config_file in config_files:
@@ -122,7 +124,7 @@ def main():
 def process(config_file):
     cfg = Config(config_file)
     if cfg.enable_config == True:
-        Login(config_file).cookie_process()
+        Login(cfg).cookie_process()
         # if cfg.mihoyobbs_login_ticket and cfg.mihoyobbs_stuid and cfg.mihoyobbs_stoken == "":
 
         #     utils.shake_sleep()

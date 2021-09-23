@@ -101,7 +101,7 @@ def main():
 
     args = parser.parse_args()
 
-    config_files = glob.glob(setting.path + '/config/*.json')
+    config_files = glob.glob(setting.path + '/config/config_*.json')
 
     if args.check_cookie:
         for config_file in config_files:

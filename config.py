@@ -74,17 +74,20 @@ class Config:
             data["mihoyobbs_login_ticket"] = self.mihoyobbs_login_ticket
             data["mihoyobbs_stuid"] = self.mihoyobbs_stuid
             data["mihoyobbs_stoken"] = self.mihoyobbs_stoken
+            data["mihoyobbs_cookies_raw"] = self.mihoyobbs_cookies_raw
             json.dump(data, f, sort_keys=False, ensure_ascii=False,
                       indent=4, separators=(', ', ': '))
             logger.info("Config保存完毕")
 
     def clear_cookies(self):
-        with open(self.config_path, "w") as f:
+        with open(self.config_path, "r") as f:
             data = json.load(f)
+
+        with open(self.config_path, "w") as f:
             data["mihoyobbs_login_ticket"] = ""
             data["mihoyobbs_stuid"] = ""
             data["mihoyobbs_stoken"] = ""
-            data["mihoyobbs_cookies"] = ""
+            data["mihoyobbs_cookies_raw"] = ""
 
             json.dump(data, f, sort_keys=False,
                       indent=4, separators=(', ', ': '))

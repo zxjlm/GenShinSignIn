@@ -63,7 +63,8 @@ class MihoyoBBS:
         response = self.s.get(url=setting.bbs_tasks_list)
         data = response.json()
         if "err" in data["message"]:
-            logger.info("get tasks failed, maybe cookie need to renew.")
+            logger.info(
+                "get tasks failed, maybe cookie need to renew, data: {}", data)
             # Config().clear_cookies()
             raise SystemExit
         else:
@@ -120,7 +121,6 @@ class MihoyoBBS:
             logger.info("~")
         else:
             logger.info("start to sign in......")
-            print(self.s.headers, self.s.cookies)
             for i in setting.mihoyobbs_list_use:
                 response = self.s.post(url=setting.bbs_sign_url.format(
                     i["id"]), data="")

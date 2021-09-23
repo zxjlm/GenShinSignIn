@@ -1,15 +1,30 @@
 
-mihoyobbs_Salt = "fd3ykrh7o1j54g581upo1tvpam0dsgtf"
-mihoyobbs_Salt_web = "14bmu1mz0yuljprsfgpvjh3ju2ni468r"
-mihoyobbs_Salt_web_old = "h8w582wxwgqvahcdkpvdhbh2w9casgfl"
+"""
+File: setting.py
+Project: GenshinSignIn
+File Created: Thursday, 23rd September 2021 8:04:23 am
+Author: harumonia (zxjlm233@gmail.com)
+-----
+Last Modified: Thursday, 23rd September 2021 4:58:07 pm
+Modified By: harumonia (zxjlm233@gmail.com>)
+-----
+Copyright 2020 - 2021 Node Supply Chain Manager Corporation Limited
+-----
+Description: 
+"""
 
-mihoyobbs_Version = "2.7.0"  # Slat和Version相互对应
-mihoyobbs_Version_old = "2.3.0"
+import os
+mihoyobbs_salt = "fd3ykrh7o1j54g581upo1tvpam0dsgtf"
+mihoyobbs_salt_web = "14bmu1mz0yuljprsfgpvjh3ju2ni468r"
+mihoyobbs_salt_web_old = "h8w582wxwgqvahcdkpvdhbh2w9casgfl"
 
-mihoyobbs_Client_type = "1"  # 1为ios 2为安卓
-mihoyobbs_Client_type_web = "5"  # 4为pc web 5为mobile web
+mihoyobbs_version = "2.7.0"  # Slat和Version相互对应
+mihoyobbs_version_old = "2.3.0"
 
-mihoyobbs_List = [{
+mihoyobbs_client_type = "1"  # 1为ios 2为安卓
+mihoyobbs_client_type_web = "5"  # 4为pc web 5为mobile web
+
+mihoyobbs_list = [{
     "id": "1",
     "forumId": "1",
     "name": "崩坏3",
@@ -37,26 +52,24 @@ mihoyobbs_List = [{
 }]
 
 # Config Load之后run里面进行列表的选择
-mihoyobbs_List_Use = []
+mihoyobbs_list_use = []
+mihoyo_login_url = 'https://user.mihoyo.com/#/login/captcha'
 
 # 米游社的API列表
-bbs_Cookieurl = "https://webapi.account.mihoyo.com/Api/cookie_accountinfo_by_loginticket?login_ticket={}"
-bbs_Cookieurl2 = "https://api-takumi.mihoyo.com/auth/api/getMultiTokenByLoginTicket?login_ticket={}&token_types=3&uid={}"
-bbs_Taskslist = "https://bbs-api.mihoyo.com/apihub/sapi/getUserMissionsState"  # 获取任务列表
-bbs_Signurl = "https://bbs-api.mihoyo.com/apihub/sapi/signIn?gids={}"  # post
-bbs_Listurl = "https://bbs-api.mihoyo.com/post/api/getForumPostList?forum_id={}&is_good=false&is_hot=false&page_size=20&sort_type=1"
-bbs_Detailurl = "https://bbs-api.mihoyo.com/post/api/getPostFull?post_id={}"
-bbs_Shareurl = "https://bbs-api.mihoyo.com/apihub/api/getShareConf?entity_id={}&entity_type=1"
-bbs_Likeurl = "https://bbs-api.mihoyo.com/apihub/sapi/upvotePost"  # post json
+bbs_cookie_url = "https://webapi.account.mihoyo.com/Api/cookie_accountinfo_by_loginticket?login_ticket={}"
+bbs_cookie_url2 = "https://api-takumi.mihoyo.com/auth/api/getMultiTokenByLoginTicket?login_ticket={}&token_types=3&uid={}"
+bbs_tasks_list = "https://bbs-api.mihoyo.com/apihub/sapi/getUserMissionsState"  # 获取任务列表
+bbs_sign_url = "https://bbs-api.mihoyo.com/apihub/sapi/signIn?gids={}"  # post
+bbs_list_url = "https://bbs-api.mihoyo.com/post/api/getForumPostList?forum_id={}&is_good=false&is_hot=false&page_size=20&sort_type=1"
+bbs_detail_url = "https://bbs-api.mihoyo.com/post/api/getPostFull?post_id={}"
+bbs_share_url = "https://bbs-api.mihoyo.com/apihub/api/getShareConf?entity_id={}&entity_type=1"
+bbs_like_url = "https://bbs-api.mihoyo.com/apihub/sapi/upvotePost"  # post json
 
-genshin_Act_id = "e202009291139501"
-genshin_Account_info_url = "https://api-takumi.mihoyo.com/binding/api/getUserGameRolesByCookie?game_biz=hk4e_cn"
-genshin_Signlisturl = "https://api-takumi.mihoyo.com/event/bbs_sign_reward/home?act_id={}"
-genshin_Is_signurl = "https://api-takumi.mihoyo.com/event/bbs_sign_reward/info?act_id={}&region={}&uid={}"
-genshin_Signurl = "https://api-takumi.mihoyo.com/event/bbs_sign_reward/sign"
+genshin_act_id = "e202009291139501"
+genshin_account_info_url = "https://api-takumi.mihoyo.com/binding/api/getUserGameRolesByCookie?game_biz=hk4e_cn"
+genshin_signed_url = "https://api-takumi.mihoyo.com/event/bbs_sign_reward/home?act_id={}"
+genshin_is_sign_url = "https://api-takumi.mihoyo.com/event/bbs_sign_reward/info?act_id={}&region={}&uid={}"
+genshin_sign_url = "https://api-takumi.mihoyo.com/event/bbs_sign_reward/sign"
 genshin_cookie_refresh = 'https://api-takumi.mihoyo.com/auth/api/getCookieAccountInfoBySToken'
 
-honkai3rd_Act_id = "e202104072769"
-honkai3rd_Account_info_url = "https://api-takumi.mihoyo.com/binding/api/getUserGameRolesByCookie?game_biz=bh3_cn"
-honkai3rd_Is_signurl = "https://api-takumi.mihoyo.com/common/euthenia/index?act_id={}&region={}&uid={}"
-honkai3rd_SignUrl = "https://api-takumi.mihoyo.com/common/euthenia/sign"
+path = os.path.dirname(os.path.realpath(__file__))

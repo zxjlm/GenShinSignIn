@@ -1,112 +1,138 @@
-import time
-import tools
-import config
-import random
+"""
+File: genshin.py
+Project: GenshinSignIn
+File Created: Thursday, 23rd September 2021 8:04:23 am
+Author: harumonia (zxjlm233@gmail.com)
+-----
+Last Modified: Thursday, 23rd September 2021 4:57:45 pm
+Modified By: harumonia (zxjlm233@gmail.com>)
+-----
+Copyright 2020 - 2021 Node Supply Chain Manager Corporation Limited
+-----
+Description: 
+"""
+
+import utils
+from config import Config
 import setting
-from request import http
+import requests
+from loguru import logger
 
 
-class genshin:
+class Genshin:
     def __init__(self) -> None:
-        self.headers = {
+        self.s = requests.session()
+        self.cfg = Config()
+        self.s.headers = {
             'Accept': 'application/json, text/plain, */*',
-            'DS': tools.Get_ds(web=True, web_old=True),
+            'DS': utils.get_ds(web=True, web_old=True),
             'Origin': 'https://webstatic.mihoyo.com',
-            'x-rpc-app_version': setting.mihoyobbs_Version_old,
+            'x-rpc-app_version': setting.mihoyobbs_version_old,
             'User-Agent': 'Mozilla/5.0 (Linux; Android 9; Unspecified Device) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/39.0.0.0 Mobile Safari/537.36 miHoYoBBS/2.3.0',
-            'x-rpc-client_type': setting.mihoyobbs_Client_type_web,
+            'x-rpc-client_type': setting.mihoyobbs_client_type_web,
             'Referer': 'https://webstatic.mihoyo.com/bbs/event/signin-ys/index.html?bbs_auth_required=true&act_id=e202009291139501&utm_source=bbs&utm_medium=mys&utm_campaign=icon',
             'Accept-Encoding': 'gzip, deflate',
             'Accept-Language': 'zh-CN,en-US;q=0.8',
             'X-Requested-With': 'com.mihoyo.hyperion',
-            "Cookie": config.mihoyobbs_Cookies,
-            'x-rpc-device_id': tools.Get_deviceid()
+            'x-rpc-device_id': utils.get_device_id()
         }
-        self.acc_List = self.Getacc_list()
-        if len(self.acc_List) != 0:
-            self.sign_Give = self.Get_signgive()
+        self.s.cookies.update(self.cfg.mihoyobbs_cookies)
+        self.verify = False
+        self.refresh_cookies()
 
-    def Getacc_list(self) -> list:
-        tools.log.info("get account list...")
-        temp_List = []
-        req = http.get(setting.genshin_Account_info_url,
-                       headers=self.headers, verify=False)
-        data = req.json()
-        if data["retcode"] != 0:
-            tools.log.warn("get account list failed")
-            exit(1)
-        for i in data["data"]["list"]:
-            temp_List.append([i["nickname"], i["game_uid"], i["region"]])
-        tools.log.info(f"get {len(temp_List)} accounts")
-        return temp_List
+        self.accounts = self.get_accounts()
+        if len(self.accounts) != 0:
+            self.sign_awards = self.get_sign_awards()
 
-    def Get_signgive(self) -> list:
-        tools.log.info("get sign in awards...")
-        req = http.get(setting.genshin_Signlisturl.format(
-            setting.genshin_Act_id), headers=self.headers, verify=False)
-        data = req.json()
+    def get_accounts(self) -> list:
+        logger.info("get account list...")
+        result = []
+        response = self.s.get(setting.genshin_account_info_url)
+        data = response.json()
         if data["retcode"] != 0:
-            tools.log.warn("get sgin awards failed")
-            print(req.text)
-            exit(1)
+            logger.warning("get account list failed")
+            raise SystemExit
+        for single_data in data["data"]["list"]:
+            result.append({
+                'nickname': single_data["nickname"],
+                'game_uid': single_data["game_uid"],
+                'region': single_data["region"]
+            })
+        logger.info(f"get {len(result)} accounts")
+        return result
+
+    def get_sign_awards(self) -> list:
+        logger.info("get sign in awards...")
+        response = self.s.get(setting.genshin_signed_url.format(
+            setting.genshin_act_id))
+        data = response.json()
+        if data["retcode"] != 0:
+            logger.warning("get sgin awards failed")
+            raise SystemExit
         return data["data"]["awards"]
 
     def refresh_cookies(self):
+        logger.info('---------------> start to refresh genshin cookies.')
         params = (
-            ('stoken', config.mihoyobbs_Stoken),
-            ('uid', config.mihoyobbs_Stuid),
+            ('stoken', self.cfg.mihoyobbs_stoken),
+            ('uid', self.cfg.mihoyobbs_stuid),
         )
-        response_cookie = http.get(setting.genshin_cookie_refresh,
-                                   headers=self.headers, params=params, verify=False)
-        self.headers['Cookie'] += '; cookie_token={}'.format(response_cookie.json()[
-            'data']['cookie_token']) + ';account_id=26184553'
+        response_cookie = self.s.get(
+            setting.genshin_cookie_refresh, params=params)
+        self.s.cookies.update({'account_id': self.cfg.mihoyobbs_stuid,
+                              'cookie_token': response_cookie.json()['data']['cookie_token']})
+        logger.success('<------------------- refresh genshin cookies succeed.')
 
-    def Is_sign(self, region: str, uid: str):
-        self.refresh_cookies()
-        url = setting.genshin_Is_signurl.format(
-            setting.genshin_Act_id, region, uid)
-        req = http.get(url, headers=self.headers, verify=False)
-        data = req.json()
+    def is_signed(self, region: str, uid: str):
+        url = setting.genshin_is_sign_url.format(
+            setting.genshin_act_id, region, uid)
+        response = self.s.get(url)
+        data = response.json()
         if data["retcode"] != 0:
-            tools.log.warn("get account sign in info failed")
-            print(req.text)
-            exit(1)
+            logger.warning("get account sign in info failed")
+            raise SystemExit
         return data["data"]
 
-    def Sign_acc(self):
-        if len(self.acc_List) != 0:
-            for i in self.acc_List:
-                tools.log.info(f"now sign in for account {i[0]}...")
-                time.sleep(random.randint(2, 8))
-                is_data = self.Is_sign(region=i[2], uid=i[1])
-                if is_data["first_bind"] == True:
-                    tools.log.warn(f"{i[0]} manual sign first")
-                else:
-                    sign_Days = is_data["total_sign_day"] - 1
-                    if is_data["is_sign"] == True:
-                        tools.log.info(
-                            f"{i[0]} has signed~ award today is{tools.Get_item(self.sign_Give[sign_Days])}")
-                    else:
-                        time.sleep(random.randint(2, 8))
-                        req = http.post(url=setting.genshin_Signurl, headers=self.headers,
-                                        json={'act_id': setting.genshin_Act_id, 'region': i[2], 'uid': i[1]}, verify=False)
-                        data = req.json()
-                        if data["retcode"] == 0:
-                            if sign_Days == 0:
-                                tools.log.info(
-                                    f"{i[0]} sign in successed~\r\naward today is{tools.Get_item(self.sign_Give[sign_Days])}")
-                            else:
-                                tools.log.info(
-                                    f"{i[0]} sign in successed~\r\naward today is{tools.Get_item(self.sign_Give[sign_Days + 1])}")
-                        elif data["retcode"] == -5003:
-                            tools.log.info(
-                                f"{i[0]} has signed~\r\n award today is {tools.Get_item(self.sign_Give[sign_Days])}")
-                        else:
-                            tools.log.warn("sign in failed")
-                            print(req.text)
+    @staticmethod
+    def get_item(raw_data: dict) -> str:
+        return f'{raw_data["name"]}x{raw_data["cnt"]}'
+
+    def sign_account(self, account):
+
+        logger.info(f"now sign in for account {account['nickname']}...")
+
+        is_data = self.is_signed(
+            region=account['region'], uid=account['game_uid'])
+
+        if is_data["first_bind"]:
+            logger.warning(f"{account['nickname']} manual sign first")
         else:
-            tools.log.warn("no target account")
+            sign_days = is_data["total_sign_day"] - 1
+            if is_data["is_sign"]:
+                logger.info(
+                    f"{account['nickname']} has signed~ award today is{self.get_item(self.sign_awards[sign_days])}")
+            else:
+                utils.shake_sleep()
+                response = self.s.post(url=setting.genshin_sign_url,
+                                       json={'act_id': setting.genshin_act_id, 'region': account['region'], 'uid': account['game_uid']})
+                data = response.json()
+                if data["retcode"] == 0:
+                    if sign_days == 0:
+                        logger.info(
+                            f"{account['nickname']} sign in succeed~\r\naward today is{self.get_item(self.sign_awards[sign_days])}")
+                    else:
+                        logger.info(
+                            f"{account['nickname']} sign in succeed~\r\naward today is{self.get_item(self.sign_awards[sign_days + 1])}")
+                elif data["retcode"] == -5003:
+                    logger.info(
+                        f"{account['nickname']} has signed~\r\n award today is {self.get_item(self.sign_awards[sign_days])}")
+                else:
+                    logger.warning(f"sign in failed, response: {data}")
 
+    def main(self):
+        if not self.accounts:
+            logger.warning("no target account")
+            return
 
-# g = genshin()
-# g.Sign_acc()
+        for account in self.accounts:
+            self.sign_account(account)

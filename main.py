@@ -1,3 +1,4 @@
+import re
 from config import Config
 from login import Login
 from genshin import Genshin
@@ -52,8 +53,8 @@ def main():
         "-c",
         default=False,
         action="store_true",
-        dest="check-configs",
-        help="parser cookie.",
+        dest="check_configs",
+        help="check configs.",
     )
     parser.add_argument(
         "--show-all-site",
@@ -102,17 +103,30 @@ def main():
     args = parser.parse_args()
 
     config_files = glob.glob(setting.path + '/config/config_*.json')
+    total_nums = len(config_files)
 
     if args.check_cookie:
-        for config_file in config_files:
+        for idx, config_file in enumerate(config_files):
+            short_file_path = re.search(r'(config_.*.json)', config_file).group(1)
+            logger.info('now use config {}, ({}/{})', short_file_path, idx, total_nums)
             cfg = Config(config_file)
             Login(cfg).is_cookies_expires()
         raise SystemExit
 
     if args.parser_cookie:
-        for config_file in config_files:
+        for idx, config_file in enumerate(config_files):
+            short_file_path = re.search(r'(config_.*.json)', config_file).group(1)
+            logger.info('now use config {}, ({}/{})', short_file_path, idx, total_nums)
             cfg = Config(config_file)
             Login(cfg).cookie_process()
+        raise SystemExit
+
+    if args.check_configs:
+        for idx, config_file in enumerate(config_files):
+            short_file_path = re.search(r'(config_.*.json)', config_file).group(1)
+            logger.info('now use config {}, ({}/{})', short_file_path, idx, total_nums)
+            cfg = Config(config_file)
+            cfg.validate_config_file()
         raise SystemExit
 
     for config_file in config_files:

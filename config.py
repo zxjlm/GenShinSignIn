@@ -14,6 +14,8 @@ Description:
 
 import json
 from loguru import logger
+from functools import reduce
+import setting
 
 
 class Config:
@@ -85,6 +87,46 @@ class Config:
         if terminate:
             logger.warning('terminate process...')
             raise SystemExit
+
+    def validate_config_file(self):
+        with open(self.config_path, 'r') as f:
+            config = json.load(f)
+
+        if config.get('enable_config', False):
+            logger.success('config is enable')
+            if config.get("mihoyobbs_cookies_raw"):
+                logger.warning('cookies is empty, maybe you can use --parser-cookie to generate a cookie.')
+
+            mail = config.get('mail', {})
+            if receivers := mail.get('mail_receivers'):
+                if reduce(lambda x, y: x and y, mail.values()):
+                    logger.success('mail is enable, mail_receivers: {}, '
+                                   'config about mail all have been filled', receivers)
+                else:
+                    logger.warning('mail is enable, mail_receivers: {}, '
+                                   'but mail config about mail need to be filled', receivers)
+            else:
+                logger.info('mail is disable')
+
+            mihoyobbs = config.get('mihoyobbs', {})
+            if mihoyobbs.get('bbs_global'):
+                logger.success('bbs function is enable.')
+                if mihoyobbs.get('bbs_signin') and (sign_list := mihoyobbs.get('bbs_signin_list', [])):
+                    sign_name_list = [foo["name"] for foo in setting.mihoyobbs_list if foo['id'] in sign_list]
+                    logger.info('    -> sign function is enable, sign list: {}.', sign_name_list)
+                if mihoyobbs.get('bbs_view_post_0'):
+                    logger.info('    -> view post is enable.')
+                if mihoyobbs.get('bbs_post_up_0'):
+                    logger.info('    -> up post is enable.')
+                    if mihoyobbs.get('bbs_post_up_cancel'):
+                        logger.info('        -> cancel up post is enable.')
+                if mihoyobbs.get('bbs_share_post_0'):
+                    logger.info('    -> share post is enable.')
+            else:
+                logger.info('bbs function is disable.')
+
+        else:
+            logger.info('config is disable')
 
     @classmethod
     def set_cookies_dict(cls, cookies: dict) -> None:

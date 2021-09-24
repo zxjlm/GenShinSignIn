@@ -23,12 +23,11 @@ class Config:
     mihoyobbs_account_id = ""
     mihoyobbs = {
         "bbs_global": True,
-        "bbs_signin": True,
         # 2: genshin 5: conmunity
         "bbs_signin_list": [2, 5],
-        "bbs_read_posts": True,
-        "bbs_like_posts": True,
-        "bbs_unlike_posts": True,
+        "bbs_view_post_0": True,
+        "bbs_post_up_0": True,
+        "bbs_post_up_cancel": True,
         "bbs_share_posts": True,
     }
     genshin_auto_sign = True
@@ -47,10 +46,10 @@ class Config:
             self.mihoyobbs["bbs_gobal"] = data["mihoyobbs"]["bbs_global"]
             self.mihoyobbs["bbs_signin"] = data["mihoyobbs"]["bbs_signin"]
             self.mihoyobbs["bbs_signin_list"] = data["mihoyobbs"]["bbs_signin_list"]
-            self.mihoyobbs["bbs_read_posts"] = data["mihoyobbs"]["bbs_read_posts"]
-            self.mihoyobbs["bbs_like_posts"] = data["mihoyobbs"]["bbs_like_posts"]
-            self.mihoyobbs["bbs_unlike"] = data["mihoyobbs"]["bbs_unlike"]
-            self.mihoyobbs["bbs_share"] = data["mihoyobbs"]["bbs_share"]
+            self.mihoyobbs["bbs_view_post_0"] = data["mihoyobbs"]["bbs_view_post_0"]
+            self.mihoyobbs["bbs_post_up_0"] = data["mihoyobbs"]["bbs_post_up_0"]
+            self.mihoyobbs["bbs_post_up_cancel"] = data["mihoyobbs"]["bbs_post_up_cancel"]
+            self.mihoyobbs["bbs_share_post_0"] = data["mihoyobbs"]["bbs_share_post_0"]
             self.genshin_auto_sign = data["genshin_auto_sign"]
             self.mihoyobbs_cookies = split_cookies(
                 data["mihoyobbs_cookies_raw"])

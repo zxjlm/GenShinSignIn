@@ -123,42 +123,33 @@ def main():
 
 def process(config_file):
     cfg = Config(config_file)
-    if cfg.enable_config == True:
+    if cfg.enable_config:
         Login(cfg).cookie_process()
-        # if cfg.mihoyobbs_login_ticket and cfg.mihoyobbs_stuid and cfg.mihoyobbs_stoken == "":
 
-        #     utils.shake_sleep()
-        if cfg.mihoyobbs["bbs_signin_multi"] == True:
-            for i in cfg.mihoyobbs["bbs_signin_multi_list"]:
-                for i2 in setting.mihoyobbs_list:
-                    if i == int(i2["id"]):
-                        setting.mihoyobbs_list_use.append(i2)
-        else:
-            for i in setting.mihoyobbs_list:
-                if int(i["id"]) == 5:
-                    setting.mihoyobbs_list_use.append(i)
-        if cfg.mihoyobbs["bbs_global"] == True:
+        if cfg.mihoyobbs["bbs_global"]:
             bbs = mihoyobbs.MihoyoBBS(cfg)
-            if bbs.task_do["bbs_sign"] and bbs.task_do["bbs_read_posts"] and bbs.task_do["bbs_like_posts"] and bbs.task_do["bbs_share"]:
+            if bbs.missions_todo["bbs_continuous_sign"]['is_get_award'] and \
+                    bbs.missions_todo["bbs_view_post_0"]['is_get_award'] and \
+                    bbs.missions_todo["bbs_post_up_0"]['is_get_award'] and \
+                    bbs.missions_todo["bbs_share_post_0"]['is_get_award']:
                 logger.info(
                     f"sign succeed {bbs.today_get_coins}, now has {bbs.total_points} miyo coin")
             else:
-                if cfg.mihoyobbs["bbs_signin"] == True:
-                    bbs.sign_in_bbs()
-                if cfg.mihoyobbs["bbs_read_posts"] == True:
-                    bbs.read_posts()
-                if cfg.mihoyobbs["bbs_like_posts"] == True:
-                    bbs.like_posts()
-                if cfg.mihoyobbs["bbs_share"] == True:
+                bbs.sign_in_bbs()
+                if cfg.mihoyobbs["bbs_view_post_0"] and not bbs.missions_todo["bbs_view_post_0"]['is_get_award']:
+                    bbs.view_posts()
+                if cfg.mihoyobbs["bbs_post_up_0"] and not bbs.missions_todo["bbs_post_up_0"]['is_get_award']:
+                    bbs.up_posts()
+                if cfg.mihoyobbs["bbs_share_post_0"] and not bbs.missions_todo["bbs_share_post_0"]['is_get_award']:
                     bbs.share_posts()
-                bbs.get_tasks()
+
                 logger.info(
                     f"今天已经获得{bbs.today_have_getcoins}个米游币，还能获得{bbs.today_get_coins}个米游币，目前有{bbs.total_points}个米游币")
                 utils.shake_sleep()
         else:
             logger.info("米游社功能未启用！")
         # 原神签到
-        if(cfg.genshin_auto_sign == True):
+        if(cfg.genshin_auto_sign):
             logger.info("正在进行原神签到")
             g = Genshin(cfg)
             g.main()

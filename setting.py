@@ -51,8 +51,6 @@ mihoyobbs_list = [{
     "url": "https://bbs.mihoyo.com/dby/"
 }]
 
-# Config Load之后run里面进行列表的选择
-mihoyobbs_list_use = []
 mihoyo_login_url = 'https://user.mihoyo.com/#/login/captcha'
 
 # 米游社的API列表

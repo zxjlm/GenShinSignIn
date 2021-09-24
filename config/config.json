@@ -9,10 +9,10 @@
       2,
       5
     ],
-    "bbs_read_posts": true,
-    "bbs_like_posts": true,
-    "bbs_unlike": true,
-    "bbs_share": true
+    "bbs_view_post_0": true,
+    "bbs_post_up_0": true,
+    "bbs_post_up_cancel": true,
+    "bbs_share_post_0": true
   },
   "genshin_auto_sign": true
 }

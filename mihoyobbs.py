@@ -29,7 +29,7 @@ class MihoyoBBS:
         self.s = requests.Session()
         self.s.headers = {
             "DS": utils.get_ds(web=False, web_old=False),
-            "cookie": f"stuid={cfg.mihoyobbs_stuid};stoken={cfg.mihoyobbs_stoken}",
+            "cookie": f"stuid={cfg.mihoyobbs_cookies['stuid']};stoken={cfg.mihoyobbs_cookies['stoken']}",
             "x-rpc-client_type": setting.mihoyobbs_client_type,
             "x-rpc-app_version": setting.mihoyobbs_version,
             "x-rpc-sys_version": "6.0.1",
@@ -44,71 +44,44 @@ class MihoyoBBS:
         self.s.cookies.update(cfg.mihoyobbs_cookies)
         self.s.verify = False
 
-        self.task_do = {
-            "bbs_sign": False,
-            "bbs_read_posts": False,
-            "bbs_read_posts_num": 3,
-            "bbs_like_posts": False,
-            "bbs_like_posts_num": 5,
-            "bbs_share": False
-        }
-        self.get_tasks()
-        if self.task_do["bbs_read_posts"] and self.task_do["bbs_like_posts"] and self.task_do["bbs_share"]:
-            pass
-        else:
-            self.posts = self.get_posts()
+        self.cfg = cfg
 
-    def get_tasks(self):
+        cycle_missions = {'continuous_sign': 1, 'view_post_0': 3, 'post_up_0': 5, 'share_post_0': 1}
+        self.missions_todo = {'bbs_' + k: {'is_get_award': False, 'rest_happened_times': v}
+                              for k, v in cycle_missions.items()}
+        self.fill_tasks()
+        self.posts = self.get_posts()
+
+    def fill_tasks(self) -> None:
         logger.info("start to get tasks.")
         response = self.s.get(url=setting.bbs_tasks_list)
         data = response.json()
         if "err" in data["message"]:
-            logger.info(
-                "get tasks failed, maybe cookie need to renew, data: {}", data)
-            # Config().clear_cookies()
+            logger.warning(
+                "get tasks failed, maybe cookie need to renew, response: {}", data)
             raise SystemExit
         else:
             self.today_get_coins = data["data"]["can_get_points"]
             self.today_have_getcoins = data["data"]["already_received_points"]
             self.total_points = data["data"]["total_points"]
-            if self.today_get_coins == 0:
-                self.task_do["bbs_sign"] = True
-                self.task_do["bbs_read_posts"] = True
-                self.task_do["bbs_like_posts"] = True
-                self.task_do["bbs_share"] = True
-            else:
-                if data["data"]["states"][0]["mission_id"] >= 62:
-                    logger.info(
-                        f"{self.today_get_coins} miyo-coin can be getten.")
-                else:
-                    logger.info(
-                        f"rest task not finished,{self.today_get_coins} miyo-coin can be getten.")
-                    for state in data["data"]["states"]:
-                        if state["mission_id"] == 58:
-                            if state["is_get_award"]:
-                                self.task_do["bbs_sign"] = True
-                        elif state["mission_id"] == 59:
-                            if state["is_get_award"]:
-                                self.task_do["bbs_read_posts"] = True
-                            else:
-                                self.task_do["bbs_read_posts_num"] -= state["happened_times"]
-                        elif state["mission_id"] == 60:
-                            if state["is_get_award"]:
-                                self.task_do["bbs_like_posts"] = True
-                            else:
-                                self.task_do["bbs_like_posts_num"] -= state["happened_times"]
-                        elif state["mission_id"] == 61:
-                            if state["is_get_award"]:
-                                self.task_do["bbs_share"] = True
-                                break
+            logger.info(
+                f"{self.can_get_points} miyo-coin can be getten. check mission list.")
+            for mission in data["data"]["states"]:
+                if mission_key := 'bbs_' + mission['mission_key'] in self.missions_todo:
+                    self.missions_todo[mission_key]['is_get_award'] = mission["is_get_award"]
+                    self.missions_todo[mission_key]['rest_happened_times'] -= mission["happened_times"]
+                    if not mission["is_get_award"]:
+                        logger.info('{} hasn`t finished, rest happen time: {}', mission_key,
+                                    self.missions_todo[mission_key]['rest_happened_times'])
 
     def get_posts(self) -> list:
-        logger.info("get posts......")
+        logger.info("start to view posts......")
         result = []
         response = self.s.get(url=setting.bbs_list_url.format(
             setting.mihoyobbs_list_use[0]["forumId"]))
         data = response.json()
-        for i in range(self.task_do['bbs_like_posts_num']):
+        max_post_need = max(mission['rest_happened_times'] for mission in self.missions_todo.values())
+        for i in range(max_post_need):
             result.append({
                 'post_id': data["data"]["list"][i]["post"]["post_id"],
                 'subject': data["data"]["list"][i]["post"]["subject"]
@@ -116,69 +89,55 @@ class MihoyoBBS:
         logger.info("get {} posts".format(len(result)))
         return result
 
-    def sign_in_bbs(self):
-        if self.task_do["bbs_sign"]:
-            logger.info("~")
-        else:
-            logger.info("start to sign in......")
-            for i in setting.mihoyobbs_list_use:
-                response = self.s.post(url=setting.bbs_sign_url.format(
-                    i["id"]), data="")
-                data = response.json()
-                if data["message"] == 'OK':
-                    logger.info(str(i["name"] + data["message"]))
-                    utils.shake_sleep()
-                else:
-                    logger.info(
-                        "failed to sign in, maybe cookie need renew, response: {}", data)
-                    # Config().clear_cookies()
-                    raise SystemExit
+    def sign_in_bbs(self) -> None:
+        config_sign_list = self.cfg.mihoyobbs.get("bbs_signin_list", [])
+        sign_list = [bbs_cfg for bbs_cfg in setting.mihoyobbs_list if bbs_cfg['id'] in config_sign_list]
 
-    def read_posts(self):
-        if self.task_do["bbs_read_posts"]:
-            logger.info("task has finished~")
-        else:
-            logger.info("start to read post task......")
-            for i in range(self.task_do["bbs_read_posts_num"]):
-                response = self.s.get(url=setting.bbs_detail_url.format(
-                    self.posts[i]['post_id']))
-                data = response.json()
-                if data["message"] == "OK":
-                    logger.info("read : {} succeed".format(
-                        self.posts[i]['subject']))
+        logger.info("start to sign in......")
+        for sign_cfg in sign_list:
+            response = self.s.post(url=setting.bbs_sign_url.format(sign_cfg["id"]), data="")
+            data = response.json()
+            if data["message"] == 'OK':
+                logger.info(str(sign_cfg["name"] + data["message"]))
                 utils.shake_sleep()
+            else:
+                logger.warning("failed to sign in. response: {}", data)
 
-    def like_posts(self):
-        if self.task_do["bbs_like_posts"]:
-            logger.info("like post has finished~")
-        else:
-            logger.info("start to like task......")
-            for i in range(self.task_do["bbs_like_posts_num"]):
-                response = self.s.post(url=setting.bbs_like_url, json={
-                    "post_id": self.posts[i]["post_id"], "is_cancel": False})
-                data = response.json()
-                if data["message"] == "OK":
-                    logger.info("like: {} succeed".format(
-                        self.posts[i]['subject']))
-                if Config.mihoyobbs["bbs_unlike"] == True:
-                    utils.shake_sleep()
-                    response = self.s.post(url=setting.bbs_like_url, json={
-                        "post_id": self.posts[i]["post_id"], "is_cancel": True})
-                    data = response.json()
-                    if data["message"] == "OK":
-                        logger.info("unlike: {} succeed".format(
-                            self.posts[i]['subject']))
-                utils.shake_sleep()
-
-    def share_posts(self):
-        if self.task_do["bbs_share"]:
-            logger.info("share task has finished~")
-        else:
-            logger.info("start to share task......")
-            response = self.s.get(url=setting.bbs_share_url.format(
-                self.posts[0]["post_id"]))
+    def view_posts(self):
+        logger.info("start to read post task......")
+        for i in range(self.missions_todo["bbs_view_post_0"]['rest_happened_times']):
+            response = self.s.get(url=setting.bbs_detail_url.format(self.posts[i]['post_id']))
             data = response.json()
             if data["message"] == "OK":
-                logger.info("share：{} succeed".format(
-                    self.posts[0]['subject']))
+                logger.info("read : {} ({}, {})", self.posts[i]['subject'], i,
+                            self.missions_todo["bbs_view_post_0"]['rest_happened_times'])
+            utils.shake_sleep()
+
+    def up_posts(self) -> None:
+        logger.info("start to like task......")
+        rest_times = self.missions_todo["bbs_up_post_0"]['rest_happened_times']
+        for i in range(rest_times):
+            response = self.s.post(url=setting.bbs_like_url, json={
+                "post_id": self.posts[i]["post_id"], "is_cancel": False})
+            data = response.json()
+            if data["message"] == "OK":
+                logger.info("like: {} ({}/{})", self.posts[i]['subject'], i, rest_times)
+
+            if self.cfg.mihoyobbs["bbs_post_up_cancel"]:
+                utils.shake_sleep()
+                response = self.s.post(url=setting.bbs_like_url, json={
+                    "post_id": self.posts[i]["post_id"], "is_cancel": True})
+                data = response.json()
+                if data["message"] == "OK":
+                    logger.info("cancel up: {} succeed.", self.posts[i]['subject'])
+            utils.shake_sleep()
+
+    def share_posts(self) -> None:
+        logger.info("start to share task......")
+        rest_times = self.missions_todo["bbs_share_post_0"]['rest_happened_times']
+        for i in range(rest_times):
+            response = self.s.get(url=setting.bbs_share_url.format(self.posts[i]["post_id"]))
+            data = response.json()
+            if data["message"] == "OK":
+                logger.info("share：{} ({}/{})", self.posts[0]['subject'], i , rest_times)
             utils.shake_sleep()

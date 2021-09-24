@@ -57,8 +57,8 @@ class Config:
             for key in self.mail:
                 self.mail[key] = data.get('mail', {}).get(key)
 
-            self.mihoyobbs_cookies = split_cookies(
-                data["mihoyobbs_cookies_raw"])
+            if data["mihoyobbs_cookies_raw"]:
+                self.mihoyobbs_cookies = split_cookies(data["mihoyobbs_cookies_raw"])
 
             logger.info("load config...")
 

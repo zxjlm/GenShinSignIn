@@ -9,7 +9,7 @@ Modified By: harumonia (zxjlm233@gmail.com>)
 -----
 Copyright 2020 - 2021 Node Supply Chain Manager Corporation Limited
 -----
-Description: 
+Description:
 """
 
 import json
@@ -18,25 +18,20 @@ from loguru import logger
 
 class Config:
     enable_config = True
-    mihoyobbs_login_ticket = ""
-    mihoyobbs_stuid = ""
-    mihoyobbs_stoken = ""
     mihoyobbs_cookies = {}
     mihoyobbs_cookies_raw = ""
     mihoyobbs_account_id = ""
     mihoyobbs = {
         "bbs_global": True,
         "bbs_signin": True,
-        "bbs_signin_multi": True,
-        # 1: honkai3rd 2: genshin 3: honkai2 4: shijian 5: main conmunity
-        "bbs_signin_multi_list": [2, 5],
+        # 2: genshin 5: conmunity
+        "bbs_signin_list": [2, 5],
         "bbs_read_posts": True,
         "bbs_like_posts": True,
         "bbs_unlike_posts": True,
         "bbs_share_posts": True,
     }
     genshin_auto_sign = True
-    honkai3rd_auto_sign = True
 
     def __init__(self, config_path) -> None:
         self.config_path = config_path
@@ -48,14 +43,10 @@ class Config:
         with open(self.config_path, "r") as f:
             data = json.load(f)
             self.enable_config = data["enable_config"]
-            self.mihoyobbs_login_ticket = data["mihoyobbs_login_ticket"]
-            self.mihoyobbs_stuid = data["mihoyobbs_stuid"]
-            self.mihoyobbs_stoken = data["mihoyobbs_stoken"]
             self.mihoyobbs_cookies_raw = data["mihoyobbs_cookies_raw"]
             self.mihoyobbs["bbs_gobal"] = data["mihoyobbs"]["bbs_global"]
             self.mihoyobbs["bbs_signin"] = data["mihoyobbs"]["bbs_signin"]
-            self.mihoyobbs["bbs_signin_multi"] = data["mihoyobbs"]["bbs_signin_multi"]
-            self.mihoyobbs["bbs_signin_multi_list"] = data["mihoyobbs"]["bbs_signin_multi_list"]
+            self.mihoyobbs["bbs_signin_list"] = data["mihoyobbs"]["bbs_signin_list"]
             self.mihoyobbs["bbs_read_posts"] = data["mihoyobbs"]["bbs_read_posts"]
             self.mihoyobbs["bbs_like_posts"] = data["mihoyobbs"]["bbs_like_posts"]
             self.mihoyobbs["bbs_unlike"] = data["mihoyobbs"]["bbs_unlike"]
@@ -64,34 +55,31 @@ class Config:
             self.mihoyobbs_cookies = split_cookies(
                 data["mihoyobbs_cookies_raw"])
 
-            logger.info("Config加载完毕")
+            logger.info("load config...")
 
     def save_config(self):
         with open(self.config_path, "r") as f:
             data = json.load(f)
 
         with open(self.config_path, "w") as f:
-            data["mihoyobbs_login_ticket"] = self.mihoyobbs_login_ticket
-            data["mihoyobbs_stuid"] = self.mihoyobbs_stuid
-            data["mihoyobbs_stoken"] = self.mihoyobbs_stoken
-            data["mihoyobbs_cookies_raw"] = self.mihoyobbs_cookies_raw
-            json.dump(data, f, sort_keys=False, ensure_ascii=False,
-                      indent=4, separators=(', ', ': '))
-            logger.info("Config保存完毕")
+            data["mihoyobbs_cookies_raw"] = ';'.join(
+                f'{k}={v}' for k, v in self.mihoyobbs_cookies.items())
+            json.dump(data, f, indent=4)
+            logger.info("save config...")
 
-    def clear_cookies(self):
+    def clear_cookies(self, terminate=True):
         with open(self.config_path, "r") as f:
             data = json.load(f)
 
         with open(self.config_path, "w") as f:
-            data["mihoyobbs_login_ticket"] = ""
-            data["mihoyobbs_stuid"] = ""
-            data["mihoyobbs_stoken"] = ""
             data["mihoyobbs_cookies_raw"] = ""
 
-            json.dump(data, f, sort_keys=False,
-                      indent=4, separators=(', ', ': '))
-            logger.info("Cookie删除完毕")
+            json.dump(data, f, indent=4)
+            logger.info("clean config...")
+
+        if terminate:
+            logger.warning('terminate process...')
+            raise SystemExit
 
     @classmethod
     def set_cookies_dict(cls, cookies: dict) -> None:

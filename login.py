@@ -9,7 +9,7 @@ Modified By: harumonia (zxjlm233@gmail.com>)
 -----
 Copyright 2020 - 2021 Node Supply Chain Manager Corporation Limited
 -----
-Description: 
+Description:
 """
 
 from typing import Union
@@ -20,6 +20,8 @@ import setting
 from loguru import logger
 from playwright.async_api import async_playwright
 import asyncio
+import os
+import utils
 
 
 async def simulator(return_type='dict') -> Union[dict, str]:
@@ -28,7 +30,7 @@ async def simulator(return_type='dict') -> Union[dict, str]:
         context = await browser.new_context()
         page = await context.new_page()
         await page.goto(setting.mihoyo_login_url)
-        async with page.expect_navigation(url='*/account/home', timeout=0) as first:
+        async with page.expect_navigation(url='*/account/home', timeout=0) as _:
             await asyncio.sleep(5)
 
         cookies = await context.cookies()
@@ -49,10 +51,11 @@ class Login:
         'Cache-Control': 'no-cache',
         'sec-ch-ua': '"Google Chrome";v="93", " Not;A Brand";v="99", "Chromium";v="93"',
         'Accept': 'application/json, text/plain, */*',
-        'x-rpc-device_id': '0b147691-d288-4284-8b1d-c0a613ece44b',
+        'x-rpc-device_id': utils.get_device_id(),
         'sec-ch-ua-mobile': '?0',
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.82 Safari/537.36',
-        'x-rpc-client_type': '4',
+        'User-Agent': ('Mozilla/5.0 (Windows NT 10.0; Win64; x64) '
+                       'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.82 Safari/537.36'),
+        'x-rpc-client_type': setting.mihoyobbs_client_type,
         'sec-ch-ua-platform': '"Windows"',
         'Origin': 'https://user.mihoyo.com',
         'Sec-Fetch-Site': 'same-site',
@@ -64,7 +67,7 @@ class Login:
 
     def __init__(self, cfg: Config) -> None:
         self.cfg = cfg
-        self.use_simulator = True
+        self.use_simulator = os.getenv('GENSHIN_USE_SIMULATOR', 1)
 
     def is_cookies_expires(self) -> bool:
         params = (
@@ -75,59 +78,68 @@ class Login:
         response = requests.get('https://webapi.account.mihoyo.com/Api/login_by_cookie',
                                 headers=headers, params=params)
         if response.json()['data']['msg'] == '登录信息已失效，请重新登录':
-            logger.warning('login cookie expires!!!')
+            logger.warning(
+                'login cookie expires!!! \nresponse: {}, \nheaders: {}', response.json(), headers)
             return True
         logger.success(
             f'account_email: {response.json()["data"]["account_info"]["email"]}, login cookie is effect~')
         return False
 
-    def resolve_cookies(self) -> None:
-        logger.info('now start to set login_ticket, (1/3)')
-        self.cfg.mihoyobbs_login_ticket = self.cfg.mihoyobbs_cookies['login_ticket']
-
+    def get_stuid(self) -> str:
         logger.info('now start to set stuid, (2/3)')
-        response = requests.get(url=setting.bbs_cookie_url.format(
-            self.cfg.mihoyobbs_login_ticket))
+        if login_uid := self.cfg.mihoyobbs_cookies.get('login_uid'):
+            return login_uid
+
+        response = requests.get(url=setting.bbs_stuid_cookie_url.format(
+            self.cfg.mihoyobbs_cookies['login_ticket']))
         data = response.json()
         if "成功" in data["data"]["msg"]:
-            self.cfg.mihoyobbs_stuid = str(
-                data["data"]["cookie_info"]["account_id"])
-
-            logger.info('now start to set stoken, (3/3)')
-            response = requests.get(url=setting.bbs_cookie_url2.format(
-                self.cfg.mihoyobbs_login_ticket, self.cfg.mihoyobbs_stuid))
-            data = response.json()
-            self.cfg.mihoyobbs_stoken = data["data"]["list"][0]["token"]
-
-            logger.success("login succeed")
-            self.cfg.save_config()
+            return str(data["data"]["cookie_info"]["account_id"])
         else:
             logger.error("get stuid failed")
             self.cfg.clear_cookies()
 
+    def get_stoken(self) -> str:
+        logger.info('now start to set stoken, (3/3)')
+        response = requests.get(url=setting.bbs_stoken_cookie_url.format(
+            self.cfg.mihoyobbs_cookies['login_ticket'], self.cfg.mihoyobbs_cookies['stuid']))
+        data = response.json()
+        if stoken := next((sub for sub in data['data']['list'] if sub['name'] == 'stoken'), None):
+            return stoken
+        else:
+            logger.error("get stuid failed")
+            self.cfg.clear_cookies()
+
+    def resolve_cookies(self) -> None:
+        self.cfg.mihoyobbs_cookies['stuid'] = self.get_stuid()
+        self.cfg.mihoyobbs_cookies['stoken'] = self.get_stoken()
+
+        logger.success("cookie distribute successfully, saving cookies...")
+        self.cfg.save_config()
+
     def cookie_process(self) -> None:
         if not self.cfg.mihoyobbs_cookies_raw or self.is_cookies_expires():
-            self.cfg.clear_cookies()
-            if self.use_simulator:
+            self.cfg.clear_cookies(terminate=False)
+            if self.use_simulator == '1':
                 logger.info(
                     '--------------> now use simulator browser to get cookie.')
                 self.cfg.mihoyobbs_cookies = asyncio.run(simulator())
-                self.cfg.mihoyobbs_cookies_raw = ';'.join(
-                    f'{k}={v}' for k, v in self.cfg.mihoyobbs_cookies.items())
                 logger.success('<----------------- get cookie succeed')
             else:
                 # TODO: 进行通知
+                logger.warning('exit...')
                 raise SystemExit
 
-            if not self.cfg.mihoyobbs_cookies:
-                self.cfg.mihoyobbs_cookies = split_cookies(
-                    self.cfg.mihoyobbs_cookies_raw)
+        if not self.cfg.mihoyobbs_cookies:
+            self.cfg.mihoyobbs_cookies = split_cookies(
+                self.cfg.mihoyobbs_cookies_raw)
 
-            if self.cfg.mihoyobbs_cookies.get('login_ticket'):
-                self.resolve_cookies()
-            else:
-                logger.error("login_ticket not in cookie")
-                self.cfg.clear_cookies()
+        logger.info('now start to set login_ticket, (1/3)')
+        if self.cfg.mihoyobbs_cookies.get('login_ticket'):
+            self.resolve_cookies()
+        else:
+            logger.error("login_ticket not in cookie")
+            self.cfg.clear_cookies()
 
 
 if __name__ == "__main__":

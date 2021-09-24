@@ -10,7 +10,7 @@ Modified By: harumonia (zxjlm233@gmail.com>)
 -----
 Copyright 2020 - 2021 Node Supply Chain Manager Corporation Limited
 -----
-Description: 
+Description:
 """
 
 import os
@@ -56,8 +56,8 @@ mihoyobbs_list_use = []
 mihoyo_login_url = 'https://user.mihoyo.com/#/login/captcha'
 
 # 米游社的API列表
-bbs_cookie_url = "https://webapi.account.mihoyo.com/Api/cookie_accountinfo_by_loginticket?login_ticket={}"
-bbs_cookie_url2 = "https://api-takumi.mihoyo.com/auth/api/getMultiTokenByLoginTicket?login_ticket={}&token_types=3&uid={}"
+bbs_stuid_cookie_url = "https://webapi.account.mihoyo.com/Api/cookie_accountinfo_by_loginticket?login_ticket={}"
+bbs_stoken_cookie_url = "https://api-takumi.mihoyo.com/auth/api/getMultiTokenByLoginTicket?login_ticket={}&token_types=3&uid={}"
 bbs_tasks_list = "https://bbs-api.mihoyo.com/apihub/sapi/getUserMissionsState"  # 获取任务列表
 bbs_sign_url = "https://bbs-api.mihoyo.com/apihub/sapi/signIn?gids={}"  # post
 bbs_list_url = "https://bbs-api.mihoyo.com/post/api/getForumPostList?forum_id={}&is_good=false&is_hot=false&page_size=20&sort_type=1"

@@ -46,12 +46,11 @@
 "mihoyobbs": {
     "bbs_Global": true, 
     "bbs_Signin": true, 
-    "bbs_Signin_multi": true, 
-    "bbs_Signin_multi_list": [2, 5], 
-    "bbs_Read_posts": true, 
-    "bbs_Like_posts": true, 
-    "bbs_Unlike": true, 
-    "bbs_Share": true
+    "bbs_signin_list": [2, 5], 
+    "bbs_view_post_0": true, 
+    "bbs_post_up_0": true, 
+    "bbs_post_up_cancel": true, 
+    "bbs_share_post_0": true
 }, 
 ```
 
@@ -63,15 +62,15 @@
 >
 >`bbs_Signin_multi`的作用是是否启用多个讨论区签到(关闭的话只签到大别墅)，`bool`类型，可设置`true`(默认)和`false`
 >
->`bbs_Signin_multi_list`的作用设置要签到的讨论区，`array`类型(**python**里面是`list`)，可设置内容可以设置`[1,2,3,4,5]`签到全部讨论区，默认是`[2,5]`，可以通过调整id的位置来进行设置阅读/点赞/分享指定讨论区的帖子`[2,1,5]`（签到原神，崩坏3和大别墅）[讨论区的id对应关系](## 讨论区的id对应关系)
+>`bbs_signin_list`的作用设置要签到的讨论区，`array`类型(**python**里面是`list`)，可设置内容可以设置`[1,2,3,4,5]`签到全部讨论区，默认是`[2,5]`，可以通过调整id的位置来进行设置阅读/点赞/分享指定讨论区的帖子`[2,1,5]`（签到原神，崩坏3和大别墅）[讨论区的id对应关系](## 讨论区的id对应关系)
 >
->`bbs_Read_posts`的作用是是否启用自动阅读帖子，`bool`类型，可设置`true`(默认)和`false`
+>`bbs_view_post_0`的作用是是否启用自动阅读帖子，`bool`类型，可设置`true`(默认)和`false`
 >
->`bbs_Like_posts`的作用是是否启用自动点赞帖子，`bool`类型，可设置`true`(默认)和`false`
+>`bbs_post_up_0`的作用是是否启用自动点赞帖子，`bool`类型，可设置`true`(默认)和`false`
 >
->`bbs_Unlike`的作用是是否启用自动取消帖子点赞(当`bbs_Like_posts`为`false`时本设置无效)，`bool`类型，可设置`true`(默认)和`false`
+>`bbs_post_up_cancel`的作用是是否启用自动取消帖子点赞(当`bbs_post_up_0`为`false`时本设置无效)，`bool`类型，可设置`true`(默认)和`false`
 >
->`bbs_Share`的作用是是否启用自动分享帖子，`bool`类型，可设置`true`(默认)和`false`
+>`bbs_share_post_0`的作用是是否启用自动分享帖子，`bool`类型，可设置`true`(默认)和`false`
 
 ```json
 "genshin_Auto_sign": true,

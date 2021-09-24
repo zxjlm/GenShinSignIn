@@ -9,7 +9,7 @@ Modified By: harumonia (zxjlm233@gmail.com>)
 -----
 Copyright 2020 - 2021 Node Supply Chain Manager Corporation Limited
 -----
-Description: 
+Description:
 """
 
 import utils
@@ -28,9 +28,11 @@ class Genshin:
             'DS': utils.get_ds(web=True, web_old=True),
             'Origin': 'https://webstatic.mihoyo.com',
             'x-rpc-app_version': setting.mihoyobbs_version_old,
-            'User-Agent': 'Mozilla/5.0 (Linux; Android 9; Unspecified Device) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/39.0.0.0 Mobile Safari/537.36 miHoYoBBS/2.3.0',
+            'User-Agent': ('Mozilla/5.0 (Linux; Android 9; Unspecified Device) AppleWebKit/537.36 (KHTML, like Gecko) '
+                           'Version/4.0 Chrome/39.0.0.0 Mobile Safari/537.36 miHoYoBBS/2.3.0'),
             'x-rpc-client_type': setting.mihoyobbs_client_type_web,
-            'Referer': 'https://webstatic.mihoyo.com/bbs/event/signin-ys/index.html?bbs_auth_required=true&act_id=e202009291139501&utm_source=bbs&utm_medium=mys&utm_campaign=icon',
+            'Referer': ('https://webstatic.mihoyo.com/bbs/event/signin-ys/index.html?bbs_auth_required=true&act_id='
+                        'e202009291139501&utm_source=bbs&utm_medium=mys&utm_campaign=icon'),
             'Accept-Encoding': 'gzip, deflate',
             'Accept-Language': 'zh-CN,en-US;q=0.8',
             'X-Requested-With': 'com.mihoyo.hyperion',
@@ -74,12 +76,11 @@ class Genshin:
     def refresh_cookies(self):
         logger.info('---------------> start to refresh genshin cookies.')
         params = (
-            ('stoken', self.cfg.mihoyobbs_stoken),
-            ('uid', self.cfg.mihoyobbs_stuid),
+            ('stoken', self.cfg.mihoyobbs_cookies['stoken']),
+            ('uid', self.cfg.mihoyobbs_cookies['stuid']),
         )
-        response_cookie = self.s.get(
-            setting.genshin_cookie_refresh, params=params)
-        self.s.cookies.update({'account_id': self.cfg.mihoyobbs_stuid,
+        response_cookie = self.s.get(setting.genshin_cookie_refresh, params=params)
+        self.s.cookies.update({'account_id': self.cfg.mihoyobbs_cookies['stuid'],
                               'cookie_token': response_cookie.json()['data']['cookie_token']})
         logger.success('<------------------- refresh genshin cookies succeed.')
 
@@ -100,28 +101,28 @@ class Genshin:
     def sign_account(self, account):
         logger.info(f"now sign in for account {account['nickname']}...")
 
-        is_data = self.is_signed(
+        signed_data = self.is_signed(
             region=account['region'], uid=account['game_uid'])
 
-        if is_data["first_bind"]:
+        if signed_data["first_bind"]:
             logger.warning(f"{account['nickname']} manual sign first")
         else:
-            sign_days = is_data["total_sign_day"] - 1
-            if is_data["is_sign"]:
+            sign_days = signed_data["total_sign_day"] - 1
+            if signed_data["is_sign"]:
                 logger.info(
-                    f"{account['nickname']} has signed~ award today is{self.get_item(self.sign_awards[sign_days])}")
+                    f"{account['nickname']} has signed~ award today is {self.get_item(self.sign_awards[sign_days])}")
             else:
                 utils.shake_sleep()
-                response = self.s.post(url=setting.genshin_sign_url,
-                                       json={'act_id': setting.genshin_act_id, 'region': account['region'], 'uid': account['game_uid']})
+                post_data = {'act_id': setting.genshin_act_id, 'region': account['region'], 'uid': account['game_uid']}
+                response = self.s.post(url=setting.genshin_sign_url, json=post_data)
                 data = response.json()
                 if data["retcode"] == 0:
                     if sign_days == 0:
                         logger.info(
-                            f"{account['nickname']} sign in succeed~ award today is{self.get_item(self.sign_awards[sign_days])}")
+                            f"{account['nickname']} sign in succeed~ award today is {self.get_item(self.sign_awards[sign_days])}")
                     else:
                         logger.info(
-                            f"{account['nickname']} sign in succeed~ award today is{self.get_item(self.sign_awards[sign_days + 1])}")
+                            f"{account['nickname']} sign in succeed~ award today is {self.get_item(self.sign_awards[sign_days + 1])}")
                 elif data["retcode"] == -5003:
                     logger.info(
                         f"{account['nickname']} has signed~ award today is {self.get_item(self.sign_awards[sign_days])}")

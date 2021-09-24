@@ -9,7 +9,7 @@ Modified By: harumonia (zxjlm233@gmail.com>)
 -----
 Copyright 2020 - 2021 Node Supply Chain Manager Corporation Limited
 -----
-Description: 
+Description:
 '''
 
 import utils
@@ -34,4 +34,3 @@ def test_generate_md5():
 def test_get_timestamp():
     assert len(utils.get_timestamp()) == 10
     assert len(utils.get_timestamp('js')) == 13
-

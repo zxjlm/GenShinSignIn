@@ -31,6 +31,13 @@ class Config:
         "bbs_share_posts": True,
     }
     genshin_auto_sign = True
+    mail = {
+        "mail_receivers": [],
+        "password": "",
+        "user": "",
+        "host": "",
+        "port": 0
+    }
 
     def __init__(self, config_path) -> None:
         self.config_path = config_path
@@ -43,14 +50,13 @@ class Config:
             data = json.load(f)
             self.enable_config = data["enable_config"]
             self.mihoyobbs_cookies_raw = data["mihoyobbs_cookies_raw"]
-            self.mihoyobbs["bbs_gobal"] = data["mihoyobbs"]["bbs_global"]
-            self.mihoyobbs["bbs_signin"] = data["mihoyobbs"]["bbs_signin"]
-            self.mihoyobbs["bbs_signin_list"] = data["mihoyobbs"]["bbs_signin_list"]
-            self.mihoyobbs["bbs_view_post_0"] = data["mihoyobbs"]["bbs_view_post_0"]
-            self.mihoyobbs["bbs_post_up_0"] = data["mihoyobbs"]["bbs_post_up_0"]
-            self.mihoyobbs["bbs_post_up_cancel"] = data["mihoyobbs"]["bbs_post_up_cancel"]
-            self.mihoyobbs["bbs_share_post_0"] = data["mihoyobbs"]["bbs_share_post_0"]
             self.genshin_auto_sign = data["genshin_auto_sign"]
+
+            for key in self.mihoyobbs:
+                self.mihoyobbs[key] = data.get('mihoyobbs', {}).get(key)
+            for key in self.mail:
+                self.mail[key] = data.get('mail', {}).get(key)
+
             self.mihoyobbs_cookies = split_cookies(
                 data["mihoyobbs_cookies_raw"])
 

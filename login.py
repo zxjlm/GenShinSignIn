@@ -13,7 +13,7 @@ Description:
 """
 
 from typing import Union
-from utils import get_timestamp, split_cookies
+from utils import get_timestamp, send_mail, split_cookies
 from config import Config
 import requests
 import setting
@@ -77,6 +77,7 @@ class Login:
         headers['Cookie'] = self.cfg.mihoyobbs_cookies_raw
         response = requests.get('https://webapi.account.mihoyo.com/Api/login_by_cookie',
                                 headers=headers, params=params)
+        # self.resolve_cookies()
         if response.json()['data']['msg'] == '登录信息已失效，请重新登录':
             logger.warning(
                 'login cookie expires!!! \nresponse: {}, \nheaders: {}', response.json(), headers)
@@ -126,7 +127,8 @@ class Login:
                 self.cfg.mihoyobbs_cookies = asyncio.run(simulator())
                 logger.success('<----------------- get cookie succeed')
             else:
-                # TODO: 进行通知
+                send_mail(self.cfg.mail.get('mail_receivers', []), 'cookie expires, and can`t renew', 'genshin sign tools', self.cfg.mail.get(
+                    'host'), self.cfg.mail.get('user'), self.cfg.mail.get('password'), self.cfg.mail.get('port'))
                 logger.warning('exit...')
                 raise SystemExit
 

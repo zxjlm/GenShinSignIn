@@ -14,5 +14,12 @@
     "bbs_post_up_cancel": true,
     "bbs_share_post_0": true
   },
-  "genshin_auto_sign": true
+  "genshin_auto_sign": true,
+  "mail": {
+    "mail_receivers": [],
+    "password": "",
+    "user": "",
+    "host": "smtp.163.com",
+    "port": 465
+  }
 }

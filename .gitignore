@@ -131,5 +131,8 @@ dmypy.json
 # VSCode
 .vscode/
 
+# Mac
+.DS_Store
+
 config/config_ttj.json
 config/config_zxj.json

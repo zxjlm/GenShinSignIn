@@ -5,10 +5,7 @@
   "mihoyobbs": {
     "bbs_global": true,
     "bbs_signin": true,
-    "bbs_signin_list": [
-      2,
-      5
-    ],
+    "bbs_signin_list": [2, 5],
     "bbs_view_post_0": true,
     "bbs_post_up_0": true,
     "bbs_post_up_cancel": true,

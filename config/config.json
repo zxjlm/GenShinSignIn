@@ -13,7 +13,7 @@
   },
   "genshin_auto_sign": true,
   "mail": {
-    "mail_receivers": [],
+    "receivers": [],
     "password": "",
     "user": "",
     "host": "smtp.163.com",

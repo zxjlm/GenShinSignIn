@@ -16,6 +16,7 @@ import json
 from loguru import logger
 from functools import reduce
 import setting
+from functools import reduce
 
 
 class Config:
@@ -34,16 +35,23 @@ class Config:
     }
     genshin_auto_sign = True
     mail = {
-        "mail_receivers": [],
+        "receivers": [],
         "password": "",
         "user": "",
         "host": "",
         "port": 0
     }
 
-    def __init__(self, config_path) -> None:
+    def __init__(self, config_path: str, auto_load=True) -> None:
+        """初始化配置, 将会自动从配置文件的路径中读取
+
+        Args:
+            config_path (str): 配置文件的路径
+            auto_load (bool, optional): 是否自动加载配置文件到类变量. Defaults to True.
+        """
         self.config_path = config_path
-        self.load_config()
+        if auto_load:
+            self.load_config()
 
     def load_config(self):
         from utils import split_cookies
@@ -88,6 +96,18 @@ class Config:
             logger.warning('terminate process...')
             raise SystemExit
 
+    def validate_config_table_row(self, columns):
+        with open(self.config_path, 'r') as f:
+            config = json.load(f)
+
+        result = []
+
+        for col in columns:
+            col_path_list = col.split('.')
+            judge = reduce(lambda x, y: x.get(y, {}), [config, *col_path_list])
+            result.append('√' if judge else 'x')
+        return result
+
     def validate_config_file(self):
         with open(self.config_path, 'r') as f:
             config = json.load(f)
@@ -98,12 +118,12 @@ class Config:
                 logger.warning('cookies is empty, maybe you can use --parser-cookie to generate a cookie.')
 
             mail = config.get('mail', {})
-            if receivers := mail.get('mail_receivers'):
+            if receivers := mail.get('receivers'):
                 if reduce(lambda x, y: x and y, mail.values()):
-                    logger.success('mail is enable, mail_receivers: {}, '
+                    logger.success('mail is enable, receivers: {}, '
                                    'config about mail all have been filled', receivers)
                 else:
-                    logger.warning('mail is enable, mail_receivers: {}, '
+                    logger.warning('mail is enable, receivers: {}, '
                                    'but mail config about mail need to be filled', receivers)
             else:
                 logger.info('mail is disable')

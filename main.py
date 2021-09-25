@@ -11,10 +11,16 @@ import requests
 import platform
 import glob
 from argparse import ArgumentParser, RawDescriptionHelpFormatter
+from rich.console import Console
+from rich.table import Table
+
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
 
 __version__ = 0.2
 module_name = "GenShinSignIn"
+
+console = Console()
 
 
 def main():
@@ -55,13 +61,6 @@ def main():
         action="store_true",
         dest="check_configs",
         help="check configs.",
-    )
-    parser.add_argument(
-        "--show-all-site",
-        action="store_true",
-        dest="show_site_list",
-        default=False,
-        help="Show all information of the apis in files.",
     )
     parser.add_argument(
         "--json",
@@ -122,11 +121,37 @@ def main():
         raise SystemExit
 
     if args.check_configs:
+        table = Table(show_header=True, header_style="bold magenta")
+        table.add_column("配置文件", style="dim")
+        table.add_column("是否启用配置")
+        table.add_column("是否配置cookies")
+        table.add_column("是否启用米游社配置", justify="right")
+        table.add_column("每日-讨论区签到", justify="right")
+        table.add_column("每日-看帖", justify="right")
+        table.add_column("每日-点赞", justify="right")
+        table.add_column("每日-分享", justify="right")
+        table.add_column("是否启用原神签到", justify="right")
+        table.add_column("是否启用邮件提醒", justify="right")
+        columns = ['enable_config',
+                   'mihoyobbs_cookies_raw',
+                   'mihoyobbs.bbs_global',
+                   'mihoyobbs.bbs_signin',
+                   'mihoyobbs.bbs_view_post_0',
+                   'mihoyobbs.bbs_post_up_0',
+                   'mihoyobbs.bbs_share_post_0',
+                   'genshin_auto_sign',
+                   'mail.receivers'
+                   ]
+
         for idx, config_file in enumerate(config_files):
             short_file_path = re.search(r'(config_.*.json)', config_file).group(1)
             logger.info('now use config {}, ({}/{})', short_file_path, idx, total_nums)
-            cfg = Config(config_file)
-            cfg.validate_config_file()
+            cfg = Config(config_file, auto_load=False)
+            row = cfg.validate_config_table_row(columns)
+            table.add_row(short_file_path, *row)
+        console.print(table)
+        # cfg.validate_config_file()
+
         raise SystemExit
 
     for config_file in config_files:

@@ -127,8 +127,8 @@ class Login:
                 self.cfg.mihoyobbs_cookies = asyncio.run(simulator())
                 logger.success('<----------------- get cookie succeed')
             else:
-                if self.cfg.mail.get('mail_receivers', []):
-                    send_mail(self.cfg.mail.get('mail_receivers', []),
+                if self.cfg.mail.get('receivers', []):
+                    send_mail(self.cfg.mail.get('receivers', []),
                               'cookie expires, and can`t renew', 'genshin sign tools', self.cfg.mail.get('host'),
                               self.cfg.mail.get('user'), self.cfg.mail.get('password'), self.cfg.mail.get('port'))
                 logger.warning('exit...')

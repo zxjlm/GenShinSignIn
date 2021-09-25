@@ -92,7 +92,7 @@ class Login:
             return login_uid
 
         response = requests.get(url=setting.bbs_stuid_cookie_url.format(
-            self.cfg.mihoyobbs_cookies['login_ticket']))
+            self.cfg.mihoyobbs_cookies['login_ticket']), headers=self)
         data = response.json()
         if "成功" in data["data"]["msg"]:
             return str(data["data"]["cookie_info"]["account_id"])
@@ -103,7 +103,7 @@ class Login:
     def get_stoken(self) -> str:
         logger.info('now start to set stoken, (3/3)')
         response = requests.get(url=setting.bbs_stoken_cookie_url.format(
-            self.cfg.mihoyobbs_cookies['login_ticket'], self.cfg.mihoyobbs_cookies['stuid']))
+            self.cfg.mihoyobbs_cookies['login_ticket'], self.cfg.mihoyobbs_cookies['stuid']), headers=self._headers)
         data = response.json()
         if stoken := next((sub for sub in data['data']['list'] if sub['name'] == 'stoken'), None):
             return stoken['token']

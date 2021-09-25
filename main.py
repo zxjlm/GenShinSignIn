@@ -157,9 +157,10 @@ def process(config_file):
                 if cfg.mihoyobbs["bbs_share_post_0"] and not bbs.missions_todo["bbs_share_post_0"]['is_get_award']:
                     bbs.share_posts()
 
-                logger.info(
-                    f"今天已经获得{bbs.today_have_getcoins}个米游币，还能获得{bbs.today_get_coins}个米游币，目前有{bbs.total_points}个米游币")
-                utils.shake_sleep()
+                bbs.fill_tasks()
+            logger.info(
+                f"今天已经获得{bbs.today_have_getcoins}个米游币，还能获得{bbs.today_get_coins}个米游币，目前有{bbs.total_points}个米游币")
+            utils.shake_sleep()
         else:
             logger.info("米游社功能未启用！")
         # 原神签到
@@ -171,7 +172,7 @@ def process(config_file):
         else:
             logger.info("原神签到功能未启用！")
     else:
-        logger.warn("Config未启用！")
+        logger.warning("Config未启用！")
 
 
 if __name__ == "__main__":

@@ -67,7 +67,8 @@ class MihoyoBBS:
             logger.info(
                 f"{self.can_get_points} miyo-coin can be getten. check mission list.")
             for mission in data["data"]["states"]:
-                if mission_key := 'bbs_' + mission['mission_key'] in self.missions_todo:
+                mission_key = 'bbs_' + mission['mission_key']
+                if mission_key in self.missions_todo:
                     self.missions_todo[mission_key]['is_get_award'] = mission["is_get_award"]
                     self.missions_todo[mission_key]['rest_happened_times'] -= mission["happened_times"]
                     if not mission["is_get_award"]:
@@ -77,8 +78,7 @@ class MihoyoBBS:
     def get_posts(self) -> list:
         logger.info("start to view posts......")
         result = []
-        response = self.s.get(url=setting.bbs_list_url.format(
-            setting.mihoyobbs_list_use[0]["forumId"]))
+        response = self.s.get(url=setting.bbs_list_url.format(26))
         data = response.json()
         max_post_need = max(mission['rest_happened_times'] for mission in self.missions_todo.values())
         for i in range(max_post_need):
@@ -91,7 +91,7 @@ class MihoyoBBS:
 
     def sign_in_bbs(self) -> None:
         config_sign_list = self.cfg.mihoyobbs.get("bbs_signin_list", [])
-        sign_list = [bbs_cfg for bbs_cfg in setting.mihoyobbs_list if bbs_cfg['id'] in config_sign_list]
+        sign_list = [bbs_cfg for bbs_cfg in setting.mihoyobbs_list if int(bbs_cfg['id']) in config_sign_list]
 
         logger.info("start to sign in......")
         for sign_cfg in sign_list:
@@ -115,7 +115,7 @@ class MihoyoBBS:
 
     def up_posts(self) -> None:
         logger.info("start to like task......")
-        rest_times = self.missions_todo["bbs_up_post_0"]['rest_happened_times']
+        rest_times = self.missions_todo["bbs_post_up_0"]['rest_happened_times']
         for i in range(rest_times):
             response = self.s.post(url=setting.bbs_like_url, json={
                 "post_id": self.posts[i]["post_id"], "is_cancel": False})

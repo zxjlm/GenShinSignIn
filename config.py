@@ -30,7 +30,7 @@ class Config:
         "bbs_view_post_0": True,
         "bbs_post_up_0": True,
         "bbs_post_up_cancel": True,
-        "bbs_share_posts": True,
+        "bbs_share_post_0": True,
     }
     genshin_auto_sign = True
     mail = {

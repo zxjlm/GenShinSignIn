@@ -13,7 +13,8 @@ Description:
 """
 
 from typing import Union
-from utils import get_timestamp, send_mail, split_cookies
+
+from utils import send_mail, split_cookies
 from config import Config
 import requests
 import setting
@@ -70,21 +71,30 @@ class Login:
         self.use_simulator = os.getenv('GENSHIN_USE_SIMULATOR', '1')
 
     def is_cookies_expires(self) -> bool:
-        params = (
-            ('t', get_timestamp('js')),
-        )
+
+        # params = (
+        #     ('t', get_timestamp('js')),
+        # )
         headers = self._headers.copy()
         headers['Cookie'] = self.cfg.mihoyobbs_cookies_raw
-        response = requests.get('https://webapi.account.mihoyo.com/Api/login_by_cookie',
-                                headers=headers, params=params)
-        # self.resolve_cookies()
-        if response.json()['data']['msg'] == '登录信息已失效，请重新登录':
+        # response = requests.get('https://webapi.account.mihoyo.com/Api/login_by_cookie',
+        #                         headers=headers, params=params)
+        # if response.json()['data']['msg'] == '登录信息已失效，请重新登录':
+        #     logger.warning(
+        #         'login cookie expires!!! \nresponse: {}, \nheaders: {}', response.json(), headers)
+        #     return True
+        # logger.success(
+        #     f'account_email: {response.json()["data"]["account_info"]["email"]}, login cookie is effect~')
+        # return False
+
+        response = requests.get(setting.bbs_tasks_list, headers=headers)
+        if response.json()['message'] == 'OK':
+            logger.success(f'login cookie is effect~')
+            return False
+        else:
             logger.warning(
                 'login cookie expires!!! \nresponse: {}, \nheaders: {}', response.json(), headers)
             return True
-        logger.success(
-            f'account_email: {response.json()["data"]["account_info"]["email"]}, login cookie is effect~')
-        return False
 
     def get_stuid(self) -> str:
         logger.info('now start to set stuid, (2/3)')
@@ -105,6 +115,7 @@ class Login:
         response = requests.get(url=setting.bbs_stoken_cookie_url.format(
             self.cfg.mihoyobbs_cookies['login_ticket'], self.cfg.mihoyobbs_cookies['stuid']), headers=self._headers)
         data = response.json()
+        print(data)
         if stoken := next((sub for sub in data['data']['list'] if sub['name'] == 'stoken'), None):
             return stoken['token']
         else:
@@ -140,7 +151,8 @@ class Login:
 
         logger.info('now start to set login_ticket, (1/3)')
         if self.cfg.mihoyobbs_cookies.get('login_ticket'):
-            self.resolve_cookies()
+            if 'stoken' not in self.cfg.mihoyobbs_cookies:
+                self.resolve_cookies()
         else:
             logger.error("login_ticket not in cookie")
             self.cfg.clear_cookies()

@@ -59,6 +59,14 @@ def main():
         help="check configs.",
     )
     parser.add_argument(
+        "--generate-config",
+        "-g",
+        default=False,
+        action="store_true",
+        dest="generate_config",
+        help="generate configs.",
+    )
+    parser.add_argument(
         "--json",
         "-j",
         metavar="JSON_FILES",
@@ -152,6 +160,10 @@ def main():
             table.add_row(short_file_path, *row)
         console.print(table)
         # cfg.validate_config_file()
+
+        raise SystemExit
+
+    if args.generate_config:
 
         raise SystemExit
 

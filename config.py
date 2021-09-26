@@ -156,3 +156,6 @@ class Config:
     @classmethod
     def get_cookies_dict(cls) -> dict:
         return cls.mihoyobbs_cookies
+
+    def to_dict(self):
+        ...

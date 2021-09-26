@@ -13,3 +13,5 @@ Resources:
         Timeout: 60
         MemorySize: 512
         CodeUri: .
+        EnvironmentVariables:
+          GENSHIN_USE_SIMULATOR: "0"

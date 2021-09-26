@@ -1,0 +1,46 @@
+attrs @ file:///root/.cache/pypoetry/artifacts/1a/aa/39/10d6d07084f186f8cf6963cb033440402ad5088bb94d712239170f2ef6/attrs-21.2.0-py2.py3-none-any.whl
+autopep8==1.5.7
+backports.entry-points-selectable==1.1.0
+beautifulsoup4==4.9.3
+certifi==2021.5.30
+cfgv==3.3.0
+charset-normalizer==2.0.6
+colorama @ file:///root/.cache/pypoetry/artifacts/b0/f3/a3/cf94f06cbe1d286a25116cfe54d5a75cb1c4b54d15b2b1b4fc03a7f657/colorama-0.4.4-py2.py3-none-any.whl
+commonmark @ file:///root/.cache/pypoetry/artifacts/1d/c9/97/39ef183295147a567d1ecb406e680f72da6e84e32284c64f59fb21094e/commonmark-0.9.1-py2.py3-none-any.whl
+distlib==0.3.2
+filelock==3.0.12
+flake8==3.9.2
+greenlet @ file:///root/.cache/pypoetry/artifacts/67/58/d3/7d70aa84f7384e5ea1ac7417976416cc4452a17f990e66fcd6fec2dfb8/greenlet-1.1.1-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+identify==2.2.11
+idna==3.2
+iniconfig @ file:///root/.cache/pypoetry/artifacts/ac/f9/da/e990ffcd9ec361a68676a5916e391286e1ea5d1b8907ae887e141a71f5/iniconfig-1.1.1-py2.py3-none-any.whl
+loguru==0.5.3
+mccabe==0.6.1
+nodeenv==1.6.0
+packaging @ file:///root/.cache/pypoetry/artifacts/6e/de/e5/e3e7e60b359c616435089a1dd11b101dc553fae21fca74bbe98d0c323e/packaging-21.0-py3-none-any.whl
+pkg_resources==0.0.0
+platformdirs==2.1.0
+playwright @ file:///root/.cache/pypoetry/artifacts/6b/85/79/c6b68827c7558ef8d552a0b6b56f09c9076f09c833b71fe409b80b8046/playwright-1.15.0-py3-none-manylinux1_x86_64.whl
+pluggy @ file:///root/.cache/pypoetry/artifacts/38/05/d7/70e2b0d553c780097b692ed658b0f553a28f16028d848a98174b1a2249/pluggy-1.0.0-py2.py3-none-any.whl
+pre-commit==2.13.0
+py @ file:///root/.cache/pypoetry/artifacts/6b/b2/2b/e6686e7d0183dbd36bd66921efa3e77ce26260a3671524cd86614290e0/py-1.10.0-py2.py3-none-any.whl
+pycodestyle==2.7.0
+pyee==8.2.2
+pyflakes==2.3.1
+Pygments @ file:///root/.cache/pypoetry/artifacts/0f/4e/ff/68a1ec60d16d43c7f126ec7a6834ec8300bf293c7fa5ab34831a7f2211/Pygments-2.10.0-py3-none-any.whl
+pymongo==3.12.0
+pyparsing @ file:///root/.cache/pypoetry/artifacts/da/e7/3d/1780282f558e5fd157bf708b28b8ba0d08323ef6bc5b6396139ce38a0b/pyparsing-2.4.7-py2.py3-none-any.whl
+pyperclip==1.8.2
+pytest @ file:///root/.cache/pypoetry/artifacts/90/e1/d5/985c1b371486cf5749ce1ec1beac04524dacb0642a52d916fd1aa82671/pytest-6.2.5-py3-none-any.whl
+PyYAML==5.4.1
+redis==3.5.3
+requests==2.26.0
+rich @ file:///root/.cache/pypoetry/artifacts/6b/89/32/c430595407bad062a0f4f087952e951b7d418147e0c9edce9e8ede8f53/rich-10.11.0-py3-none-any.whl
+schedule==1.1.0
+six==1.16.0
+soupsieve==2.2.1
+toml==0.10.2
+typing-extensions==3.10.0.2
+urllib3==1.26.7
+virtualenv==20.6.0
+websockets @ file:///root/.cache/pypoetry/artifacts/ff/6c/3f/3854d575dd44f1025cf1081cc0e22b98dc144dad0e07a1ddd4173615c3/websockets-10.0-cp38-cp38-manylinux2010_x86_64.whl

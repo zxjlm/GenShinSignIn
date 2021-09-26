@@ -6,7 +6,7 @@ authors = ["harumonia <zxjlm233@gmail.com>"]
 license = "MIT"
 
 [tool.poetry.dependencies]
-python = "3.8"
+python = "^3.8"
 requests = "^2.26.0"
 loguru = "^0.5.3"
 pyperclip = "^1.8.2"

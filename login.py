@@ -126,12 +126,13 @@ class Login:
     def resolve_cookies(self) -> None:
         self.cfg.mihoyobbs_cookies['stuid'] = self.get_stuid()
         self.cfg.mihoyobbs_cookies['stoken'] = self.get_stoken()
+        self.cfg.mihoyobbs_cookies_raw = ';'.join(f'{k}={v}' for k, v in self.cfg.mihoyobbs_cookies.items())
 
         logger.info("cookie distribute successfully, saving cookies...")
         self.cfg.save_config()
 
     def cookie_process(self) -> None:
-        if not self.cfg.mihoyobbs_cookies_raw or self.is_cookies_expires():
+        if not self.cfg.mihoyobbs_cookies_raw:
             self.cfg.clear_cookies(terminate=False)
             if self.use_simulator == '1':
                 logger.info(
@@ -157,6 +158,9 @@ class Login:
         else:
             logger.error("login_ticket not in cookie")
             self.cfg.clear_cookies()
+
+        if self.is_cookies_expires():
+            raise SystemExit
 
 
 if __name__ == "__main__":

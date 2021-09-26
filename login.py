@@ -89,7 +89,7 @@ class Login:
 
         response = requests.get(setting.bbs_tasks_list, headers=headers)
         if response.json()['message'] == 'OK':
-            logger.success(f'login cookie is effect~')
+            logger.success('login cookie is effect~')
             return False
         else:
             logger.warning(

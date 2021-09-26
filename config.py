@@ -16,7 +16,6 @@ import json
 from loguru import logger
 from functools import reduce
 import setting
-from functools import reduce
 
 
 class Config:

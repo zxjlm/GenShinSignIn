@@ -120,8 +120,8 @@ class Generator:
 
         self.cfg.mihoyobbs_cookies_raw = self.generate_cookie()
 
-        with open(self.cfg.config_path, "w") as f:
-            json.dump(data, f, indent=4)
+        # with open(self.cfg.config_path, "w") as f:
+        #     json.dump(data, f, indent=4)
 
 
 if __name__ == "__main__":

@@ -4,4 +4,4 @@ try:
 except Exception as _:
     import logging
     logger = logging.getLogger()
-    logger.info('loguru can`t be fount, now switch to logging')
+    logger.info(f'loguru can`t be fount, now switch to logging, exception: {_}')

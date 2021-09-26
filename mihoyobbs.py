@@ -101,7 +101,7 @@ class MihoyoBBS:
                 logger.info(str(sign_cfg["name"] + data["message"]))
                 utils.shake_sleep()
             else:
-                logger.warning("failed to sign in. response: {}", data)
+                logger.warning(f"failed to sign in. response: {data}")
 
     def view_posts(self):
         logger.info("start to read post task......")
@@ -109,8 +109,8 @@ class MihoyoBBS:
             response = self.s.get(url=setting.bbs_detail_url.format(self.posts[i]['post_id']))
             data = response.json()
             if data["message"] == "OK":
-                logger.info("read : {} ({}, {})", self.posts[i]['subject'], i,
-                            self.missions_todo["bbs_view_post_0"]['rest_happened_times'])
+                logger.info("read : {} ({}, {})".format(self.posts[i]['subject'], i,
+                            self.missions_todo["bbs_view_post_0"]['rest_happened_times']))
             utils.shake_sleep()
 
     def up_posts(self) -> None:
@@ -121,7 +121,7 @@ class MihoyoBBS:
                 "post_id": self.posts[i]["post_id"], "is_cancel": False})
             data = response.json()
             if data["message"] == "OK":
-                logger.info("like: {} ({}/{})", self.posts[i]['subject'], i, rest_times)
+                logger.info("like: {} ({}/{})".format(self.posts[i]['subject'], i, rest_times))
 
             if self.cfg.mihoyobbs["bbs_post_up_cancel"]:
                 utils.shake_sleep()
@@ -129,7 +129,7 @@ class MihoyoBBS:
                     "post_id": self.posts[i]["post_id"], "is_cancel": True})
                 data = response.json()
                 if data["message"] == "OK":
-                    logger.info("cancel up: {} succeed.", self.posts[i]['subject'])
+                    logger.info(f"cancel up: {self.posts[i]['subject']} succeed.")
             utils.shake_sleep()
 
     def share_posts(self) -> None:
@@ -139,5 +139,5 @@ class MihoyoBBS:
             response = self.s.get(url=setting.bbs_share_url.format(self.posts[i]["post_id"]))
             data = response.json()
             if data["message"] == "OK":
-                logger.info("share：{} ({}/{})", self.posts[0]['subject'], i , rest_times)
+                logger.info("share：{} ({}/{})".format(self.posts[0]['subject'], i , rest_times))
             utils.shake_sleep()

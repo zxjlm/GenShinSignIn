@@ -16,8 +16,5 @@ def handler(event, context):
     logger.info(get_python_version())
     config_files = glob.glob(setting.path + '/config/config_*.json')
     for config_file in config_files:
-        logger.info(
-            '****************** start to get config {} *********', config_file)
+        logger.info(f'****************** start to get config {config_file} *********')
         process(config_file)
-    # logger.info('hello world')
-    # return 'hello world'

@@ -6,21 +6,17 @@ import setting
 import mihoyobbs
 import utils
 import urllib3
-from loguru import logger
+from loader import logger
 import requests
 import platform
 import glob
 from argparse import ArgumentParser, RawDescriptionHelpFormatter
-from rich.console import Console
-from rich.table import Table
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
 __version__ = 0.2
 module_name = "GenShinSignIn"
-
-console = Console()
 
 
 def main():
@@ -121,6 +117,11 @@ def main():
         raise SystemExit
 
     if args.check_configs:
+        from rich.console import Console
+        from rich.table import Table
+
+        console = Console()
+
         table = Table(show_header=True, header_style="bold magenta")
         table.add_column("配置文件", style="dim")
         table.add_column("是否启用配置")

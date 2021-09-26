@@ -18,14 +18,14 @@ from utils import send_mail, split_cookies
 from config import Config
 import requests
 import setting
-from loguru import logger
-from playwright.async_api import async_playwright
+from loader import logger
 import asyncio
 import os
 import utils
 
 
 async def simulator(return_type='dict') -> Union[dict, str]:
+    from playwright.async_api import async_playwright
     async with async_playwright() as playwright:
         browser = await playwright.firefox.launch(headless=False)
         context = await browser.new_context()
@@ -83,13 +83,13 @@ class Login:
         #     logger.warning(
         #         'login cookie expires!!! \nresponse: {}, \nheaders: {}', response.json(), headers)
         #     return True
-        # logger.success(
+        # logger.info(
         #     f'account_email: {response.json()["data"]["account_info"]["email"]}, login cookie is effect~')
         # return False
 
         response = requests.get(setting.bbs_tasks_list, headers=headers)
         if response.json()['message'] == 'OK':
-            logger.success('login cookie is effect~')
+            logger.info('login cookie is effect~')
             return False
         else:
             logger.warning(
@@ -98,7 +98,8 @@ class Login:
 
     def get_stuid(self) -> str:
         logger.info('now start to set stuid, (2/3)')
-        if login_uid := self.cfg.mihoyobbs_cookies.get('login_uid'):
+        login_uid = self.cfg.mihoyobbs_cookies.get('login_uid')
+        if login_uid:
             return login_uid
 
         response = requests.get(url=setting.bbs_stuid_cookie_url.format(
@@ -115,8 +116,8 @@ class Login:
         response = requests.get(url=setting.bbs_stoken_cookie_url.format(
             self.cfg.mihoyobbs_cookies['login_ticket'], self.cfg.mihoyobbs_cookies['stuid']), headers=self._headers)
         data = response.json()
-        print(data)
-        if stoken := next((sub for sub in data['data']['list'] if sub['name'] == 'stoken'), None):
+        stoken = next((sub for sub in data['data']['list'] if sub['name'] == 'stoken'), None)
+        if stoken:
             return stoken['token']
         else:
             logger.error("get stuid failed")
@@ -126,7 +127,7 @@ class Login:
         self.cfg.mihoyobbs_cookies['stuid'] = self.get_stuid()
         self.cfg.mihoyobbs_cookies['stoken'] = self.get_stoken()
 
-        logger.success("cookie distribute successfully, saving cookies...")
+        logger.info("cookie distribute successfully, saving cookies...")
         self.cfg.save_config()
 
     def cookie_process(self) -> None:
@@ -136,7 +137,7 @@ class Login:
                 logger.info(
                     '--------------> now use simulator browser to get cookie.')
                 self.cfg.mihoyobbs_cookies = asyncio.run(simulator())
-                logger.success('<----------------- get cookie succeed')
+                logger.info('<----------------- get cookie succeed')
             else:
                 if self.cfg.mail.get('receivers', []):
                     send_mail(self.cfg.mail.get('receivers', []),

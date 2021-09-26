@@ -16,7 +16,7 @@ import utils
 from config import Config
 import setting
 import requests
-from loguru import logger
+from loader import logger
 
 
 class Genshin:
@@ -82,7 +82,7 @@ class Genshin:
         response_cookie = self.s.get(setting.genshin_cookie_refresh, params=params)
         self.s.cookies.update({'account_id': self.cfg.mihoyobbs_cookies['stuid'],
                               'cookie_token': response_cookie.json()['data']['cookie_token']})
-        logger.success('<------------------- refresh genshin cookies succeed.')
+        logger.info('<------------------- refresh genshin cookies succeed.')
 
     def is_signed(self, region: str, uid: str):
         url = setting.genshin_is_sign_url.format(

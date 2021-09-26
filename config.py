@@ -13,7 +13,7 @@ Description:
 """
 
 import json
-from loguru import logger
+from loader import logger
 from functools import reduce
 import setting
 
@@ -112,15 +112,16 @@ class Config:
             config = json.load(f)
 
         if config.get('enable_config', False):
-            logger.success('config is enable')
+            logger.info('config is enable')
             if config.get("mihoyobbs_cookies_raw"):
                 logger.warning('cookies is empty, maybe you can use --parser-cookie to generate a cookie.')
 
             mail = config.get('mail', {})
-            if receivers := mail.get('receivers'):
+            receivers = mail.get('receivers')
+            if receivers:
                 if reduce(lambda x, y: x and y, mail.values()):
-                    logger.success('mail is enable, receivers: {}, '
-                                   'config about mail all have been filled', receivers)
+                    logger.info('mail is enable, receivers: {}, '
+                                'config about mail all have been filled', receivers)
                 else:
                     logger.warning('mail is enable, receivers: {}, '
                                    'but mail config about mail need to be filled', receivers)
@@ -129,8 +130,9 @@ class Config:
 
             mihoyobbs = config.get('mihoyobbs', {})
             if mihoyobbs.get('bbs_global'):
-                logger.success('bbs function is enable.')
-                if mihoyobbs.get('bbs_signin') and (sign_list := mihoyobbs.get('bbs_signin_list', [])):
+                logger.info('bbs function is enable.')
+                sign_list = mihoyobbs.get('bbs_signin_list', [])
+                if mihoyobbs.get('bbs_signin') and sign_list:
                     sign_name_list = [foo["name"] for foo in setting.mihoyobbs_list if foo['id'] in sign_list]
                     logger.info('    -> sign function is enable, sign list: {}.', sign_name_list)
                 if mihoyobbs.get('bbs_view_post_0'):

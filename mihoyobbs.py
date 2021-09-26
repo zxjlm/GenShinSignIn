@@ -17,7 +17,7 @@ from config import Config
 import random
 import setting
 import requests
-from loguru import logger
+from loader import logger
 
 
 class MihoyoBBS:

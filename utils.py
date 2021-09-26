@@ -18,7 +18,7 @@ import random
 import string
 import hashlib
 
-from loguru import logger
+from loader import logger
 import setting
 import re
 
@@ -69,6 +69,11 @@ def get_ds(web: bool, web_old: bool) -> str:
 def get_device_id() -> str:
     from config import Config
     return str(uuid.uuid3(uuid.NAMESPACE_URL, Config.mihoyobbs_cookies_raw)).replace('-', '').upper()
+
+
+def get_python_version():
+    import sys
+    return sys.version
 
 
 def send_mail(receivers: list, html: str, subject: str, mail_host: int, mail_user: str, mail_pass: str, mail_port=0):

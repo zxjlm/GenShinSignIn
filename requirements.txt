@@ -42,5 +42,5 @@ soupsieve==2.2.1
 toml==0.10.2
 typing-extensions==3.10.0.2
 urllib3==1.26.7
-virtualenv==20.6.0
+virtualenv==20.8.1
 websockets @ file:///root/.cache/pypoetry/artifacts/ff/6c/3f/3854d575dd44f1025cf1081cc0e22b98dc144dad0e07a1ddd4173615c3/websockets-10.0-cp38-cp38-manylinux2010_x86_64.whl

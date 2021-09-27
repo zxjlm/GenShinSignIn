@@ -134,5 +134,4 @@ dmypy.json
 # Mac
 .DS_Store
 
-config/config_ttj.json
-config/config_zxj.json
+config/config_*.json

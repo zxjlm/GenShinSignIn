@@ -1,7 +1,7 @@
 attrs @ file:///root/.cache/pypoetry/artifacts/1a/aa/39/10d6d07084f186f8cf6963cb033440402ad5088bb94d712239170f2ef6/attrs-21.2.0-py2.py3-none-any.whl
 autopep8==1.5.7
 backports.entry-points-selectable==1.1.0
-beautifulsoup4==4.9.3
+beautifulsoup4==4.10.0
 certifi==2021.5.30
 cfgv==3.3.1
 charset-normalizer==2.0.6

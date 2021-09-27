@@ -3,7 +3,7 @@ autopep8==1.5.7
 backports.entry-points-selectable==1.1.0
 beautifulsoup4==4.9.3
 certifi==2021.5.30
-cfgv==3.3.0
+cfgv==3.3.1
 charset-normalizer==2.0.6
 colorama @ file:///root/.cache/pypoetry/artifacts/b0/f3/a3/cf94f06cbe1d286a25116cfe54d5a75cb1c4b54d15b2b1b4fc03a7f657/colorama-0.4.4-py2.py3-none-any.whl
 commonmark @ file:///root/.cache/pypoetry/artifacts/1d/c9/97/39ef183295147a567d1ecb406e680f72da6e84e32284c64f59fb21094e/commonmark-0.9.1-py2.py3-none-any.whl

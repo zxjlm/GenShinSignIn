@@ -20,9 +20,7 @@ import setting
 
 class Config:
     enable_config = True
-    mihoyobbs_cookies = {}
     mihoyobbs_cookies_raw = ""
-    mihoyobbs_account_id = ""
     mihoyobbs = {
         "bbs_global": True,
         # 2: genshin 5: conmunity
@@ -49,6 +47,7 @@ class Config:
             auto_load (bool, optional): 是否自动加载配置文件到类变量. Defaults to True.
         """
         self.config_path = config_path
+        self.mihoyobbs_cookies = {}
         if auto_load:
             self.load_config()
 
@@ -149,13 +148,20 @@ class Config:
         else:
             logger.info('config is disable')
 
-    @classmethod
-    def set_cookies_dict(cls, cookies: dict) -> None:
-        cls.mihoyobbs_cookies = cookies
+    # @classmethod
+    # def set_cookies_dict(cls, cookies: dict) -> None:
+    #     cls.mihoyobbs_cookies = cookies
+
+    # @classmethod
+    # def get_cookies_dict(cls) -> dict:
+    #     return cls.mihoyobbs_cookies
 
     @classmethod
-    def get_cookies_dict(cls) -> dict:
-        return cls.mihoyobbs_cookies
+    def to_dict(cls):
+        return dict((name, getattr(cls, name))
+                    for name in dir(cls) if not name.startswith('__') and not callable(getattr(cls, name)))
 
-    def to_dict(self):
-        ...
+
+if __name__ == '__main__':
+    print(dict((name, getattr(Config, name))
+          for name in dir(Config) if not name.startswith('__') and not callable(getattr(Config, name))))

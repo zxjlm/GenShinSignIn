@@ -1,10 +1,10 @@
-from login import simulator
 import os
 import setting
 from loader import logger
 from config import Config
 from functools import wraps
 import asyncio
+import json
 
 
 def loop_decorator(func):
@@ -99,6 +99,7 @@ class Generator:
         print('注意: 此操作将会使用play_wright唤醒浏览器')
         result = input()
         if result.upper() == 'Y':
+            from login import simulator
             cookie_raw = asyncio.run(simulator('str'))
             return cookie_raw
         else:
@@ -120,8 +121,8 @@ class Generator:
 
         self.cfg.mihoyobbs_cookies_raw = self.generate_cookie()
 
-        # with open(self.cfg.config_path, "w") as f:
-        #     json.dump(data, f, indent=4)
+        with open(self.cfg.config_path, "w") as f:
+            json.dump(self.cfg.to_dict(), f, indent=4)
 
 
 if __name__ == "__main__":

@@ -119,7 +119,6 @@ class Generator:
         Config.mihoyobbs['bbs_post_up_cancel'] = False
 
         Config.genshin_auto_sign = self.enable_genshin_signin()
-        print(Config.to_dict())
 
         # cookies = self.generate_cookie()
         Config.mihoyobbs_cookies_raw = self.generate_cookie()

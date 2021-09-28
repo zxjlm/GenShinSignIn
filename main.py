@@ -20,6 +20,7 @@ module_name = "GenShinSignIn"
 
 
 def main():
+    print('----------------------------- genshin cli start --------------------')
     version_string = (
         f"%(prog)s {__version__} \n"
         f"requests:  {requests.__version__} \n"
@@ -164,6 +165,9 @@ def main():
         raise SystemExit
 
     if args.generate_config:
+        from generator import Generator
+        p = Generator()
+        p.process()
 
         raise SystemExit
 

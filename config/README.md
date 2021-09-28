@@ -2,87 +2,41 @@
 
 ## 本项目识别 config 文件的方法
 
-单用户是直接读取文件夹里面的`config.json`，多用户是读取文件夹里面为`.json`为拓展名的文件
+读取文件夹里面的`config_*.json`文件, '\*'是通配符, 替换为你的配置文件的名称.
 
 ## json 文件的字段讲解
 
-```json
-"enable_Config": true,
-```
+```python
+"enable_config": true,  # 此字段的作用是是否启用这个配置文件,`bool`类型,可设置`true`(默认)和`false`
 
-> 此字段的作用是是否启用这个配置文件，`bool`类型，可设置`true`(默认)和`false`
+"config_version": 1,  # 此字段的作用是表明配置文件版本(不过脚本里面暂时没有用到),`int`类型
 
-```json
-"config_Version": 3,
-```
+"mihoyobbs_cookies_raw": "",  # 此字段的作用存储米游社需要的 cookie 值(你填入的 cookie 里面必须带这个),`str`类型,默认为空,脚本执行成功时自动填入
 
-> 此字段的作用是表明配置文件版本(不过脚本里面暂时没有用到)，`int`类型
-
-```json
-"mihoyobbs_Login_ticket": "",
-```
-
-> 此字段的作用存储米游社需要的 cookie 值(你填入的 cookie 里面必须带这个)，`str`类型，默认为空，脚本执行成功时自动填入
-
-```json
-"mihoyobbs_Stuid": "",
-```
-
-> 此字段的作用存储米游社需要的 cookie 值(实际上就是 uid)，`str`类型，默认为空，脚本执行成功时自动获取并填入
-
-```json
-"mihoyobbs_Stoken": "",
-```
-
-> 此字段的作用存储米游社的 cookie 值，`str`类型，默认为空，脚本执行成功时自动获取并填入
-
-```json
-"mihoyobbs_Cookies": "",
-```
-
-> 此字段的作用存储米游社的 cookie 值(用于获取上面两个参数和后续的原神&崩坏 3 自动签到)，`str`类型，默认为空，脚本执行前必须填入
-
-```json
 "mihoyobbs": {
-    "bbs_Global": true,
-    "bbs_Signin": true,
-    "bbs_signin_list": [2, 5],
-    "bbs_view_post_0": true,
-    "bbs_post_up_0": true,
-    "bbs_post_up_cancel": true,
-    "bbs_share_post_0": true
+    "bbs_global": true,  # 作用是是否启用米游币获取,`bool`类型,可设置`true`(默认)和`false`
+    "bbs_signin": true,  # 作用是是否启用讨论区自动签到,`bool`类型,可设置`true`(默认)和`false`
+    "bbs_signin_list": [2, 5],  # 设置要签到的讨论区, 默认是[2,5], id 与 讨论区的关系可见于底部附录
+    "bbs_view_post_0": true, # 作用是是否启用自动阅读帖子,`bool`类型,可设置`true`(默认)和`false`
+    "bbs_post_up_0": true, # 作用是是否启用自动点赞帖子,`bool`类型,可设置`true`(默认)和`false`
+    "bbs_post_up_cancel": true, # 作用是是否启用自动取消帖子点赞(当`bbs_post_up_0`为`false`时本设置无效),`bool`类型,可设置`true`(默认)和`false`
+    "bbs_share_post_0": true # 作用是是否启用自动分享帖子,`bool`类型,可设置`true`(默认)和`false`
+
 },
+
+"genshin_auto_sign": true,  # 此字段的作用是是否启用原神自动签到,`bool`类型,可设置`true`(默认)和`false`
+
+# 邮箱的配置信息可以到邮箱服务的提供方去查找, 这里给出163的配置
+"mail": {   # 邮件配置, 当cookie失效时会发送通知邮件
+    "receivers": [], # 接收邮件的邮箱, 可以设为多个
+    "password": "", # 邮箱密码
+    "user": "", # 邮箱账号
+    "host": "smtp.163.com", # 邮箱host
+    "port": 465  # 邮箱端口
+}
+
+
 ```
-
-此字段的作用是米游币获取相关的设置，`object`类型(**python**里面是`dict`)
-
-> `bbs_Global`的作用是是否启用米游币获取，`bool`类型，可设置`true`(默认)和`false`
->
-> `bbs_Signin`的作用是是否启用讨论区自动签到，`bool`类型，可设置`true`(默认)和`false`
->
-> `bbs_Signin_multi`的作用是是否启用多个讨论区签到(关闭的话只签到大别墅)，`bool`类型，可设置`true`(默认)和`false`
->
-> `bbs_signin_list`的作用设置要签到的讨论区，`array`类型(**python**里面是`list`)，可设置内容可以设置`[1,2,3,4,5]`签到全部讨论区，默认是`[2,5]`，可以通过调整 id 的位置来进行设置阅读/点赞/分享指定讨论区的帖子`[2,1,5]`（签到原神，崩坏 3 和大别墅）[讨论区的 id 对应关系](## 讨论区的 id 对应关系)
->
-> `bbs_view_post_0`的作用是是否启用自动阅读帖子，`bool`类型，可设置`true`(默认)和`false`
->
-> `bbs_post_up_0`的作用是是否启用自动点赞帖子，`bool`类型，可设置`true`(默认)和`false`
->
-> `bbs_post_up_cancel`的作用是是否启用自动取消帖子点赞(当`bbs_post_up_0`为`false`时本设置无效)，`bool`类型，可设置`true`(默认)和`false`
->
-> `bbs_share_post_0`的作用是是否启用自动分享帖子，`bool`类型，可设置`true`(默认)和`false`
-
-```json
-"genshin_Auto_sign": true,
-```
-
-> 此字段的作用是是否启用原神自动签到，`bool`类型，可设置`true`(默认)和`false`
-
-```json
-"honkai3rd_Auto_sign": false
-```
-
-> 此字段的作用是是否启用崩坏 3 自动签到，`bool`类型，可设置`true`和`false`(默认)
 
 ## 讨论区的 id 对应关系
 

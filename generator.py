@@ -26,7 +26,8 @@ def loop_decorator(func):
 
 class Generator:
     def __init__(self) -> None:
-        self.cfg = Config('', auto_load=False)
+        # self.cfg = Config('', auto_load=False)
+        self.config_path = ''
 
     @staticmethod
     def check_file(file_name) -> str:
@@ -46,7 +47,7 @@ class Generator:
             if file_path == "":
                 continue
             else:
-                self.cfg.config_path = file_path
+                self.config_path = file_path
                 logger.info(f'生成文件 {file_path}')
                 return True
         else:
@@ -108,21 +109,28 @@ class Generator:
 
     def process(self):
         self.generate_file()
-        self.cfg.mihoyobbs['enable'] = self.enable_mihoyobbs_tasks()
-        self.cfg.mihoyobbs['bbs_signin'] = self.enable_mihoyobbs_sign()
-        if self.cfg.mihoyobbs['bbs_signin']:
-            self.cfg.mihoyobbs['bbs_signin_list'] = [2, 5]
-        self.cfg.mihoyobbs['bbs_view_post_0'] = self.enable_mihoyobbs_view_post()
-        self.cfg.mihoyobbs['bbs_post_up_0'] = self.enable_mihoyobbs_up_post()
-        self.cfg.mihoyobbs['bbs_share_post_0'] = self.enable_mihoyobbs_share_post()
-        self.cfg.mihoyobbs['bbs_post_up_cancel'] = False
+        Config.mihoyobbs['enable'] = self.enable_mihoyobbs_tasks()
+        Config.mihoyobbs['bbs_signin'] = self.enable_mihoyobbs_sign()
+        if Config.mihoyobbs['bbs_signin']:
+            Config.mihoyobbs['bbs_signin_list'] = [2, 5]
+        Config.mihoyobbs['bbs_view_post_0'] = self.enable_mihoyobbs_view_post()
+        Config.mihoyobbs['bbs_post_up_0'] = self.enable_mihoyobbs_up_post()
+        Config.mihoyobbs['bbs_share_post_0'] = self.enable_mihoyobbs_share_post()
+        Config.mihoyobbs['bbs_post_up_cancel'] = False
 
-        self.cfg.genshin_auto_sign = self.enable_genshin_signin()
+        Config.genshin_auto_sign = self.enable_genshin_signin()
+        print(Config.to_dict())
 
-        self.cfg.mihoyobbs_cookies_raw = self.generate_cookie()
+        # cookies = self.generate_cookie()
+        Config.mihoyobbs_cookies_raw = self.generate_cookie()
 
-        with open(self.cfg.config_path, "w") as f:
-            json.dump(self.cfg.to_dict(), f, indent=4)
+        print('--------------> 邮件通知默认不设置, 但是配置文件中生成了对应的接口槽, 如有需要, 对比说明文件填写即可 <--------')
+        print('文件生成中...')
+
+        with open(self.config_path, "w") as f:
+            json.dump(Config.to_dict(), f, indent=4)
+
+        print('文件生成完毕~')
 
 
 if __name__ == "__main__":

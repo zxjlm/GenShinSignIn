@@ -2,7 +2,7 @@
 
 这个一个闲来的练手项目, 核心功能是<u>自动完成原神游戏本体的签到和米游社相关的签到任务</u>. 如存在使用问题或者功能建议, 可以在 [issue](https://github.com/zxjlm/GenShinSignIn/issues)中提出.
 
-项目的结构参考了 [AutoMihoyoBBS](https://github.com/Womsxd/AutoMihoyoBBS) 项目.
+项目的结构参考了 [AutoMihoyoBBS](https://github.com/Womsxd/AutoMihoyoBBS) 项目, 在大佬的项目基础上做了一些个人向的修改.
 
 
 

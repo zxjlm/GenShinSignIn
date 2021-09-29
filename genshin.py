@@ -108,6 +108,7 @@ class Genshin:
             logger.warning(f"{account['nickname']} manual sign first")
             return
 
+        # print(signed_data)
         sign_days = signed_data["total_sign_day"] - 1
         if signed_data["is_sign"]:
             logger.info(
@@ -117,8 +118,9 @@ class Genshin:
             post_data = {'act_id': setting.genshin_act_id, 'region': account['region'], 'uid': account['game_uid']}
             response = self.s.post(url=setting.genshin_sign_url, json=post_data)
             data = response.json()
+            # print(self.sign_awards)
             if data["retcode"] == 0:
-                awards = self.get_item(self.sign_awards[sign_days + sign_days % 9999])
+                awards = self.get_item(self.sign_awards[sign_days + int(sign_days / 9999)])
                 logger.info(f"{account['nickname']} sign in succeed~ award today is {awards}")
             elif data["retcode"] == -5003:
                 awards = self.get_item(self.sign_awards[sign_days])

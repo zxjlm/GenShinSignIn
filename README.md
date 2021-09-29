@@ -57,7 +57,7 @@ playwright install firefox
 
 使用 `python main.py --check-configs` 可以快速检查所有文件的配置信息.
 
-![](https://cdn.jsdelivr.net/gh/zxjlm/my-static-files@master/img/截屏2021-09-26 下午9.02.26.png)
+![](https://cdn.jsdelivr.net/gh/zxjlm/my-static-files@master/img/check-configs.png)
 
 ## 生成配置文件
 
@@ -73,7 +73,7 @@ _config_ 目录下的 _config.py_ 就是基础配置文件, 在该文件夹下�
 
 使用 `python main.py -g` 可以直接生成一份配置文件.
 
-![](https://cdn.jsdelivr.net/gh/zxjlm/my-static-files@master/img/截屏2021-09-28 下午8.08.21.png)
+![](https://cdn.jsdelivr.net/gh/zxjlm/my-static-files@master/img/generate-config.png)
 
 ## TODO
 

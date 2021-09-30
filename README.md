@@ -53,6 +53,8 @@ playwright install firefox
 
 配置文件内容形如 `config.json` , 各个配置项的含义参看 [config配置项手册](https://github.com/zxjlm/GenShinSignIn/blob/main/config/README.md). 同时, 配置文件可以使用 `python main.py generaet-config` 来生成, 更多配置文件的信息见于 [生成配置文件](#生成配置文件)
 
+![](https://cdn.jsdelivr.net/gh/zxjlm/my-static-files@master/img/mainprocess.png)
+
 ### 检查配置文件
 
 使用 `python main.py --check-configs` 可以快速检查所有文件的配置信息.

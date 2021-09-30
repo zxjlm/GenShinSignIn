@@ -104,24 +104,24 @@ class MihoyoBBS:
                 logger.warning(f"failed to sign in. response: {data}")
 
     def view_posts(self):
-        logger.info("start to read post task......")
+        logger.info("start to view task......")
         for i in range(self.missions_todo["bbs_view_post_0"]['rest_happened_times']):
             response = self.s.get(url=setting.bbs_detail_url.format(self.posts[i]['post_id']))
             data = response.json()
             if data["message"] == "OK":
-                logger.info("read : {} ({}, {})".format(self.posts[i]['subject'], i,
+                logger.info("view : {} ({}, {})".format(self.posts[i]['subject'], i,
                             self.missions_todo["bbs_view_post_0"]['rest_happened_times']))
             utils.shake_sleep()
 
     def up_posts(self) -> None:
-        logger.info("start to like task......")
+        logger.info("start to liking task......")
         rest_times = self.missions_todo["bbs_post_up_0"]['rest_happened_times']
         for i in range(rest_times):
             response = self.s.post(url=setting.bbs_like_url, json={
                 "post_id": self.posts[i]["post_id"], "is_cancel": False})
             data = response.json()
             if data["message"] == "OK":
-                logger.info("like: {} ({}/{})".format(self.posts[i]['subject'], i, rest_times))
+                logger.info("liking: {} ({}/{})".format(self.posts[i]['subject'], i, rest_times))
 
             if self.cfg.mihoyobbs["bbs_post_up_cancel"]:
                 utils.shake_sleep()

@@ -74,7 +74,7 @@ class Genshin:
         return data["data"]["awards"]
 
     def refresh_cookies(self):
-        logger.info('---------------> start to refresh genshin cookies.')
+        logger.info('---------------> 开始获取cookie_token...')
         params = (
             ('stoken', self.cfg.mihoyobbs_cookies['stoken']),
             ('uid', self.cfg.mihoyobbs_cookies['stuid']),

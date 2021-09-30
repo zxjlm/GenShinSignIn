@@ -120,7 +120,7 @@ class Login:
         if stoken:
             return stoken['token']
         else:
-            logger.error("get stuid failed")
+            logger.error("get stoken failed")
             self.cfg.clear_cookies()
 
     def resolve_cookies(self) -> None:

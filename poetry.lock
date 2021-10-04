@@ -180,7 +180,7 @@ python-versions = ">=2.6"
 
 [[package]]
 name = "playwright"
-version = "1.15.0"
+version = "1.15.2"
 description = "A high-level API to automate web browsers"
 category = "main"
 optional = false
@@ -401,7 +401,7 @@ dev = ["pytest (>=4.6.2)", "black (>=19.3b0)"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "5c32d082cf7785c333f6779daec7a8e28280188fdcb397ca3f2fc7f36305913d"
+content-hash = "6265ec1ba258956c71507f760507992d9414978a460344d054902952ab88ef10"
 
 [metadata.files]
 atomicwrites = [
@@ -521,11 +521,11 @@ pbr = [
     {file = "pbr-5.6.0.tar.gz", hash = "sha256:42df03e7797b796625b1029c0400279c7c34fd7df24a7d7818a1abb5b38710dd"},
 ]
 playwright = [
-    {file = "playwright-1.15.0-py3-none-macosx_10_13_x86_64.whl", hash = "sha256:5eb399aa610ca3fbfb28ad8687da6807ae33dd8446533495318f61728c5098f1"},
-    {file = "playwright-1.15.0-py3-none-macosx_11_0_universal2.whl", hash = "sha256:f43966af36d5a757b0503b86447cbc269a5b63944a49de462d70c5df40b6821a"},
-    {file = "playwright-1.15.0-py3-none-manylinux1_x86_64.whl", hash = "sha256:b2619003000c769fb028f5fd4465f5985c8a0865b8bace935896698843e9b747"},
-    {file = "playwright-1.15.0-py3-none-win32.whl", hash = "sha256:324f3344ecc47fea739b34690572477bbd58724b6904af82bb9fcbaf277d56c8"},
-    {file = "playwright-1.15.0-py3-none-win_amd64.whl", hash = "sha256:1d8b453ce22c985a1e2d30fa0d13e48311ba9f836615d186e11d466cd0792b3e"},
+    {file = "playwright-1.15.2-py3-none-macosx_10_13_x86_64.whl", hash = "sha256:40ef29003c70d892481b2bab7e90437d8d9b2f04c2f86b23cda5eef799eb7296"},
+    {file = "playwright-1.15.2-py3-none-macosx_11_0_universal2.whl", hash = "sha256:9669a4905c658fdc80b01e07cc13264be8df5ae0b922f1a1a3d0711b86eb8d3d"},
+    {file = "playwright-1.15.2-py3-none-manylinux1_x86_64.whl", hash = "sha256:2ba3c5031025e8e748e603c8e3302142509cea12753de66e86527d619f149892"},
+    {file = "playwright-1.15.2-py3-none-win32.whl", hash = "sha256:7e147c1759b4508fef9fd1d05fff0e050f8029d003cef96e8c225404e14403b7"},
+    {file = "playwright-1.15.2-py3-none-win_amd64.whl", hash = "sha256:d6e30e249085942efe8ad5fd975e4135ef8367aa8a94a0a874d2eb2428225fc4"},
 ]
 pluggy = [
     {file = "pluggy-1.0.0-py2.py3-none-any.whl", hash = "sha256:74134bbf457f031a36d68416e1509f34bd5ccc019f0bcc952c7b909d06b37bd3"},

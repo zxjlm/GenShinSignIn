@@ -10,7 +10,7 @@ python = "^3.8"
 requests = "^2.26.0"
 loguru = "^0.5.3"
 pyperclip = "^1.8.2"
-playwright = "^1.15.0"
+playwright = "^1.15.2"
 rich = "^10.11.0"
 
 [tool.poetry.dev-dependencies]

@@ -48,7 +48,10 @@ def get_timestamp(format: str = 'python') -> str:
 
 
 def shake_sleep(floor: int = 2, ceil: int = 5) -> None:
-    time.sleep(random.randint(floor, ceil))
+    try:
+        time.sleep(random.randint(floor, ceil))
+    except Exception as _e:
+        logger.warning(f'time sleep error. {_e}')
 
 
 def get_ds(web: bool, web_old: bool) -> str:

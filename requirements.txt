@@ -11,7 +11,7 @@ distlib==0.3.2
 filelock==3.0.12
 flake8==3.9.2
 greenlet @ file:///root/.cache/pypoetry/artifacts/67/58/d3/7d70aa84f7384e5ea1ac7417976416cc4452a17f990e66fcd6fec2dfb8/greenlet-1.1.1-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
-identify==2.2.15
+identify==2.5.17
 idna==3.2
 iniconfig @ file:///root/.cache/pypoetry/artifacts/ac/f9/da/e990ffcd9ec361a68676a5916e391286e1ea5d1b8907ae887e141a71f5/iniconfig-1.1.1-py2.py3-none-any.whl
 loguru==0.5.3

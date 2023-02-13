@@ -19,7 +19,7 @@ mccabe==0.6.1
 nodeenv==1.6.0
 packaging @ file:///root/.cache/pypoetry/artifacts/6e/de/e5/e3e7e60b359c616435089a1dd11b101dc553fae21fca74bbe98d0c323e/packaging-21.0-py3-none-any.whl
 pkg_resources==0.0.0
-platformdirs==2.1.0
+platformdirs==3.0.0
 playwright @ file:///root/.cache/pypoetry/artifacts/6b/85/79/c6b68827c7558ef8d552a0b6b56f09c9076f09c833b71fe409b80b8046/playwright-1.15.0-py3-none-manylinux1_x86_64.whl
 pluggy @ file:///root/.cache/pypoetry/artifacts/38/05/d7/70e2b0d553c780097b692ed658b0f553a28f16028d848a98174b1a2249/pluggy-1.0.0-py2.py3-none-any.whl
 pre-commit==2.15.0

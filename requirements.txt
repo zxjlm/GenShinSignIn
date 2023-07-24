@@ -2,7 +2,7 @@ attrs @ file:///root/.cache/pypoetry/artifacts/1a/aa/39/10d6d07084f186f8cf6963cb
 autopep8==1.5.7
 backports.entry-points-selectable==1.1.0
 beautifulsoup4==4.10.0
-certifi==2021.5.30
+certifi==2022.12.07
 cfgv==3.3.1
 charset-normalizer==2.0.6
 colorama @ file:///root/.cache/pypoetry/artifacts/b0/f3/a3/cf94f06cbe1d286a25116cfe54d5a75cb1c4b54d15b2b1b4fc03a7f657/colorama-0.4.4-py2.py3-none-any.whl
